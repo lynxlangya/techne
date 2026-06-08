@@ -6,4 +6,8 @@ Ancient Greek for **craft · skill · art** — the practical know-how of *makin
 
 Skills and agents for the AI era.
 
+Install: techne is a Claude Code plugin scaffold; add this repository as a local
+marketplace or plugin directory after cloning. See [WORKFLOW.md](WORKFLOW.md)
+for the delivery process and [ROADMAP.md](ROADMAP.md) for the product map.
+
 <sub>技艺。古希腊语 τέχνη，是 “technique / technology” 的共同词根，指「知道怎么做」的实践之知。读作「忒克涅 / TEK-nee」。</sub>
