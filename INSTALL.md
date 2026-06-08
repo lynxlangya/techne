@@ -10,7 +10,7 @@ Native plugin install:
 
 ```text
 /plugin marketplace add lynxlangya/techne
-/plugin install techne@techne
+/plugin install techne@techne-dev
 /reload-plugins
 ```
 
@@ -20,7 +20,7 @@ Local development from a clone:
 
 ```text
 /plugin marketplace add ./
-/plugin install techne@techne
+/plugin install techne@techne-dev
 /reload-plugins
 ```
 
