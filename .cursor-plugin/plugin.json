@@ -1,0 +1,22 @@
+{
+  "name": "techne",
+  "displayName": "techne",
+  "description": "A curated skills plugin for practical AI-era craft, judgment, and delivery.",
+  "version": "0.1.0",
+  "author": {
+    "name": "lynxlangya",
+    "email": "lynxlangya@gmail.com"
+  },
+  "homepage": "https://github.com/lynxlangya/techne",
+  "repository": "https://github.com/lynxlangya/techne",
+  "license": "MIT",
+  "keywords": [
+    "skills",
+    "agents",
+    "cursor",
+    "workflows",
+    "judgment",
+    "craft"
+  ],
+  "skills": "./skills/"
+}
