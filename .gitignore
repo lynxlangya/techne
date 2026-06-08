@@ -1,7 +1,0 @@
-dist/
-node_modules
-WORKFLOW.md
-coverage/
-demo/
-.vscode
-.DS_Store
