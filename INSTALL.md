@@ -4,6 +4,14 @@ techne keeps one source of truth in `skills/`. Each target below either loads
 that directory through a thin native skin or installs the same skills through
 the Agent Skills CLI.
 
+## For an AI agent
+
+If you were asked to install techne: clone the repo to a stable local path (don't
+run from a throwaway temp dir), detect which harness you're running in, follow the
+matching section below, then verify the skill is available (e.g. `/techne:viz` in
+Claude Code, or the `viz` skill listed by your agent). If you can't tell which
+harness you're in, use the universal `npx skills` fallback.
+
 ## Claude Code
 
 Native plugin install:

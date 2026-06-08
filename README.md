@@ -6,10 +6,20 @@ Ancient Greek for **craft · skill · art** — the practical know-how of *makin
 
 Skills and agents for the AI era.
 
-Install techne for Claude, Codex, Cursor, Gemini, Kimi, or another Agent Skills
-target with [INSTALL.md](INSTALL.md). See [WORKFLOW.md](WORKFLOW.md) for the
-delivery process and [ROADMAP.md](ROADMAP.md) for the product map.
-
 <sub>技艺。古希腊语 τέχνη，是 “technique / technology” 的共同词根，指「知道怎么做」的实践之知。读作「忒克涅 / TEK-nee」。</sub>
 
-<sub>安装方式见 [INSTALL.md](INSTALL.md)：Claude 原生插件，Codex/Kimi 等通过 Agent Skills，Cursor/Gemini 为薄皮。</sub>
+## Install
+
+**Recommended — ask your AI agent.** Paste this into Claude Code or Codex:
+
+```
+Install techne for my current agent by following https://github.com/lynxlangya/techne/blob/main/INSTALL.md , then verify the viz skill is available.
+```
+
+The agent reads [INSTALL.md](INSTALL.md), detects your harness (Claude / Codex / Cursor / Gemini / Kimi), runs the right install path, and confirms the skill works.
+
+**Manual** — per-harness commands and the universal `npx skills` fallback are in [INSTALL.md](INSTALL.md).
+
+See [WORKFLOW.md](WORKFLOW.md) for the delivery process and [ROADMAP.md](ROADMAP.md) for the product map.
+
+<sub>安装：推荐把上面的提示词丢给 Claude / Codex，让它读 [INSTALL.md](INSTALL.md) 自行安装并验证；手动命令与 `npx skills` 兜底也在 INSTALL.md。</sub>
