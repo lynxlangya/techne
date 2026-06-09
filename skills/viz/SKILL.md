@@ -34,9 +34,9 @@ real investigation before drawing.
 7. **Mark provenance.** Solid Mermaid edges mean read-from-code. Dashed edges
    (`-. infer .->`) mean inference. Record sources in stored metadata and, when
    useful, in comments near the diagram.
-8. **Emit, validate, store, serve.** Write Mermaid source first, validate it,
-   store it with `scripts/store_viz.py`, and only start the viewer when the
-   session is interactive.
+8. **Emit, validate, store, build viewer, open when interactive.** Write Mermaid
+   source first, validate it, store it with `scripts/store_viz.py`, always build
+   the self-contained viewer, and only open it when the session is interactive.
 
 ## Script Usage
 
@@ -44,8 +44,8 @@ real investigation before drawing.
   `node skills/viz/scripts/validate-mermaid.mjs diagram.md --max-nodes 15`
 - Store a diagram in a target project:
   `python3 skills/viz/scripts/store_viz.py --project /path/to/project --name architecture --title "Architecture" --diagram diagram.md --shape monorepo --type flowchart --source src/app.ts --coverage grounded --node-count 8`
-- Serve stored diagrams interactively:
-  `python3 skills/viz/scripts/viewer/server.py --project /path/to/project`
+- Build the self-contained viewer, opening it only when interactive:
+  `python3 skills/viz/scripts/build_viewer.py --project /path/to/project --open`
 
 The validator expects `mermaid@11.15.0` and `jsdom` to be installed in one of
 these places: `TECHNE_VIZ_NODE_MODULES`, `skills/viz/scripts/node_modules`, the
