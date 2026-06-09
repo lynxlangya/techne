@@ -223,6 +223,7 @@
         display: block;
         width: 100%;
         height: 100%;
+        max-width: none !important;
       }
 
       .empty,
@@ -548,6 +549,9 @@ __TECHNE_SVG_PAN_ZOOM_JS__
         function prepareSvg(svg) {
           svg.removeAttribute("height");
           svg.removeAttribute("width");
+          svg.style.width = "100%";
+          svg.style.height = "100%";
+          svg.style.maxWidth = "none";
           svg.setAttribute("preserveAspectRatio", "xMidYMid meet");
           svg.setAttribute("role", "img");
           svg.setAttribute("aria-label", titleEl.textContent || "Diagram");
