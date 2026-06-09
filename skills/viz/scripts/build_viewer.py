@@ -85,11 +85,13 @@ def render_html(index: dict, diagrams: list[dict]) -> str:
         "__TECHNE_SVG_PAN_ZOOM_JS__": SVG_PAN_ZOOM.read_text(encoding="utf-8"),
         "__TECHNE_VIEWER_DATA__": payload,
     }
+    counts = {key: html.count(key) for key in replacements}
+    invalid = [(key, count) for key, count in counts.items() if count != 1]
+    if invalid:
+        details = ", ".join(f"{key} found {count}" for key, count in invalid)
+        raise SystemExit(f"Viewer template placeholders must appear exactly once: {details}")
     for placeholder, replacement in replacements.items():
         html = html.replace(placeholder, replacement)
-    missing = [key for key in replacements if key in html]
-    if missing:
-        raise SystemExit(f"Viewer template placeholders were not replaced: {', '.join(missing)}")
     return html
 
 
