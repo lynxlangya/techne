@@ -89,8 +89,8 @@ The old `atools-js` codebase is preserved on the **`legacy`** branch (`origin/le
 
 ## Conventions
 
-- **Bilingual docs** — public-facing docs are English-first with a Chinese companion section for the same user-facing content. Keep English as the default execution/reference language, then add Chinese so the maintainer and Chinese users can read the same intent.
-- **Skill docs split** — `SKILL.md` is the executable skill body; a real skill's human-facing usage guide should live in a nearby `README.md`.
+- **Bilingual docs** — public-facing docs are split by language: `README.md` is the default English document, and `README-CN.md` is the Chinese companion. Use the same pattern for skill usage guides when Chinese docs are needed.
+- **Skill docs split** — `SKILL.md` is the executable skill body; a real skill's human-facing usage guides should live in nearby `README.md` / `README-CN.md` files.
 - **`main` is the working branch**; `legacy` exists solely to archive the pre-reset code. Keep it untouched.
 - **Minimal, content-first changes** — avoid adding root scaffolding, package managers, CI, or new host skins unless the issue explicitly requires them.
 - **Review handoff** — Codex-authored PRs normally stop at Claude/maintainer review unless the user explicitly asks to merge.
