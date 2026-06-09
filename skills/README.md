@@ -20,12 +20,18 @@ Do not create category folders such as `skills/coding/` or `skills/writing/`.
 Audience, category, and product sequencing belong in `ROADMAP.md`, not in the
 filesystem.
 
+Current real skills:
+
+- `viz`: investigate a real codebase by diagramming it. It is a typed diagram
+  router over architecture, interaction, data-model, state-model, and
+  type-structure diagrams.
+
 ## Skill Body
 
 `SKILL.md` is the asset. Keep it independent of Claude Code, Codex, or any other
 host unless a section is explicitly marked as host-specific reference material.
-The same body should be usable through one Claude skin, one Codex skin, or future
-skins without becoming separate products.
+The same body should be usable through Claude Code, Codex, Cursor, Gemini, Kimi,
+or future host paths without becoming separate products.
 
 Every real techne skill should force a move the model would otherwise skip. Do
 not add skills that only recite general knowledge or clone a built-in platform
@@ -55,8 +61,16 @@ Use support files only when needed:
 
 Do not commit empty support folders.
 
-## One Body, Two Skins
+For executable helpers, keep generated output out of this repo. For example,
+`viz` writes target-project output under `.techne/viz/`; those files are
+artifacts, not source.
 
-The Claude plugin skin lives in `.claude-plugin/`. A Codex skin is intentionally
-deferred until the Codex skill format is verified. Both should point at this
-single `skills/` library rather than forking skill bodies.
+## One Body, Multiple Thin Skins
+
+The Claude plugin skin lives in `.claude-plugin/`. Cursor and Gemini have thin
+manifests at `.cursor-plugin/plugin.json` and `gemini-extension.json`. Codex,
+Kimi, and other hosts use the install matrix in `INSTALL.md`, including the
+Agent Skills CLI fallback.
+
+All skins and installers should point at this single `skills/` library rather
+than forking skill bodies.

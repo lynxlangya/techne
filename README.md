@@ -8,6 +8,14 @@ Skills and agents for the AI era.
 
 <sub>技艺。古希腊语 τέχνη，是 “technique / technology” 的共同词根，指「知道怎么做」的实践之知。读作「忒克涅 / TEK-nee」。</sub>
 
+## Skills
+
+- `viz` — investigate a real codebase by diagramming it. It routes one user
+  request across architecture, interaction, data-model, state-model, and
+  type-structure diagrams, then validates and builds a local viewer.
+
+<sub>当前种子 skill：`viz`，通过真实代码证据画架构、时序、数据模型、状态机和类型结构图，并生成本地查看器。</sub>
+
 ## Install
 
 **Recommended — ask your AI agent.** Paste this into Claude Code or Codex:

@@ -65,6 +65,40 @@ Seed only audiences where the maintainer can personally judge quality:
 Other industries stay as placeholders until they are judgeable by the maintainer
 or contributed by someone who can own the quality bar.
 
+## Current Seed
+
+`viz` is the first real seeded skill. It lives under `skills/viz/` and forces
+codebase investigation through diagramming.
+
+Current supported diagram kinds:
+
+- `architecture`: project/module/service topology via Mermaid `flowchart` /
+  `graph`.
+- `interaction`: request, command, job, or actor flow via `sequenceDiagram`.
+- `data-model`: tables/entities and schema relationships via `erDiagram`.
+- `state-model`: status and workflow transitions via `stateDiagram-v2` /
+  `stateDiagram`.
+- `type-structure`: bounded class/interface/protocol structure via
+  `classDiagram`.
+
+The next `viz` work should improve faithfulness and evaluator coverage before
+adding more Mermaid types. Unsupported diagram families stay out until they have
+their own evidence contract and mechanical gate.
+
+## Packaging Status
+
+techne now ships one shared `skills/` body through multiple thin paths:
+
+- Claude Code native plugin: `.claude-plugin/`.
+- Cursor manifest: `.cursor-plugin/plugin.json`.
+- Gemini extension manifest: `gemini-extension.json`.
+- Codex, Kimi, and fallback installs: `INSTALL.md` via Agent Skills CLI where
+  applicable.
+
+Keep version touchpoints synchronized through `INSTALL.md`. Do not add new
+agent skins unless they can point at the same `skills/` body without copying
+skill text.
+
 ## Profiles, Not Branches
 
 Audiences are bundles and example sets over one flat skill library. They are not

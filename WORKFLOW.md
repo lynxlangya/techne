@@ -1,7 +1,7 @@
 ```yaml
 version: v0.1
 project: techne
-updated: 2026-06-08
+updated: 2026-06-09
 ```
 
 # Workflow
@@ -37,7 +37,8 @@ For any new skill/agent, or a change with design content.
 4. **Review** — Claude reviews in two hats: *did it faithfully execute the spec*, and *fresh-eyes: is the result actually good*. Claude runs the empirical validation inside a Claude context.
 5. **GATE · empirical acceptance** — baseline vs. with-skill, meeting the bar fixed in the issue. Judged jointly by you and me. Finance: historical ground-truth backtest. Else: blind baseline-vs-skill.
 6. **Merge** — your call.
-7. **Deploy to both** — Claude plugin + codex matrix (one body, two skins).
+7. **Deploy to hosts** — Claude plugin + install matrix skins (one body,
+   multiple thin host paths).
 8. **Tune** — use surfaces problems; fixes ride the light path.
 
 Two hard gates: a spec that fails red-team is not executed (2); a skill that fails
@@ -58,13 +59,14 @@ pipeline; pure patching → light. Tuning loops usually ride here.
 - **Empirical acceptance** — baseline, test set, what counts as *improvement*, the pass bar. If you can't write this, it isn't ready for an issue.
 - **Scope & deploy target.**
 
-## Authoring — one body, two skins
+## Authoring — one body, multiple thin host paths
 
 The skill **body** (the forced cognitive move) is the asset, and it stays
-tool-neutral. The superpowers form is its Claude-facing skin (plugin manifest,
-marketplace, skills layout); codex gets a parallel skin in its matrix. Keep
-tool-specific things — trigger mechanism, plugin metadata, tool names — *out* of
-the body. One body, two skins, or the two tools drift into two products.
+tool-neutral. Claude, Codex, Cursor, Gemini, Kimi, or any future host should load
+or install that same body through thin manifests, marketplaces, or install
+instructions. Keep tool-specific things — trigger mechanism, plugin metadata,
+tool names — *out* of the body. One shared body prevents the hosts from drifting
+into separate products.
 
 Structural constraint: a Claude skill only runs inside Claude. codex can author
 one but can't exercise it — so validation (steps 4–5) always lives on the Claude /
