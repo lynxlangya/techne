@@ -6,6 +6,15 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 
+COMPATIBLE_TYPES = {
+    "architecture": {"flowchart", "graph"},
+    "interaction": {"sequenceDiagram"},
+    "data-model": {"erDiagram"},
+    "state-model": {"stateDiagram-v2", "stateDiagram"},
+    "type-structure": {"classDiagram"},
+}
+SUPPORTED_TYPES = {mermaid_type for mermaid_types in COMPATIBLE_TYPES.values() for mermaid_type in mermaid_types}
+
 def slugify(value: str) -> str:
     slug = re.sub(r"[^a-zA-Z0-9]+", "-", value.strip().lower()).strip("-")
     return slug or "diagram"
@@ -26,6 +35,20 @@ def load_index(index_path: Path) -> dict:
     return json.loads(index_path.read_text(encoding="utf-8"))
 
 
+def resolve_diagram_kind(diagram_kind, mermaid_type):
+    if mermaid_type not in SUPPORTED_TYPES:
+        allowed = ", ".join(sorted(SUPPORTED_TYPES))
+        raise SystemExit(f"Unsupported --type {mermaid_type}; expected one of: {allowed}")
+    if diagram_kind is None:
+        if mermaid_type in {"flowchart", "graph"}:
+            return "architecture"
+        raise SystemExit(f"--diagram-kind is required when --type is {mermaid_type}")
+    if mermaid_type not in COMPATIBLE_TYPES[diagram_kind]:
+        allowed = ", ".join(sorted(COMPATIBLE_TYPES[diagram_kind]))
+        raise SystemExit(f"--diagram-kind {diagram_kind} is not compatible with --type {mermaid_type}; expected one of: {allowed}")
+    return diagram_kind
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description="Store a techne viz diagram in a target project.")
     parser.add_argument("--project", required=True, type=Path)
@@ -33,6 +56,11 @@ def main() -> None:
     parser.add_argument("--title", required=True)
     parser.add_argument("--diagram", required=True, type=Path)
     parser.add_argument("--shape", required=True)
+    parser.add_argument(
+        "--diagram-kind",
+        choices=sorted(COMPATIBLE_TYPES),
+        help="Cognitive diagram kind; required for non-architecture Mermaid types.",
+    )
     parser.add_argument("--type", default="flowchart")
     parser.add_argument("--source", action="append", default=[])
     parser.add_argument("--coverage", default="grounded")
@@ -45,7 +73,8 @@ def main() -> None:
     project = args.project.resolve()
     if not project.is_dir():
         raise SystemExit(f"Project directory does not exist: {project}")
-    if args.node_count and args.node_count > args.max_nodes and not (args.grouped or args.split):
+    diagram_kind = resolve_diagram_kind(args.diagram_kind, args.type)
+    if diagram_kind == "architecture" and args.node_count and args.node_count > args.max_nodes and not (args.grouped or args.split):
         raise SystemExit(
             f"Node count {args.node_count} exceeds max {args.max_nodes}; group into subgraphs or mark --grouped/--split"
         )
@@ -64,6 +93,7 @@ def main() -> None:
         {
             "title": args.title,
             "file": output.name,
+            "diagramKind": diagram_kind,
             "type": args.type,
             "sourceFiles": args.source,
             "generatedAt": datetime.now(timezone.utc).isoformat(),

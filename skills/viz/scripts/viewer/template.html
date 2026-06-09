@@ -660,10 +660,27 @@ __TECHNE_SVG_PAN_ZOOM_JS__
           return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.2 6.2 0 0 0 10.5 10.5Z" /></svg>';
         }
 
+        function getMermaidType(item) {
+          return item.type || "flowchart";
+        }
+
+        function getDiagramKind(item) {
+          if (item.diagramKind) return item.diagramKind;
+          const mermaidType = getMermaidType(item);
+          if (mermaidType === "flowchart" || mermaidType === "graph") return "architecture";
+          if (mermaidType === "sequenceDiagram") return "interaction";
+          if (mermaidType === "erDiagram") return "data-model";
+          if (mermaidType === "stateDiagram-v2" || mermaidType === "stateDiagram") return "state-model";
+          if (mermaidType === "classDiagram") return "type-structure";
+          return "unknown";
+        }
+
         function renderList() {
           listEl.innerHTML = "";
           countEl.textContent = `${diagrams.length} ${diagrams.length === 1 ? "diagram" : "diagrams"}`;
           diagrams.forEach((item, index) => {
+            const diagramKind = getDiagramKind(item);
+            const mermaidType = getMermaidType(item);
             const button = document.createElement("button");
             button.type = "button";
             button.className = "diagram-item";
@@ -671,8 +688,8 @@ __TECHNE_SVG_PAN_ZOOM_JS__
             button.innerHTML = `
               <div class="diagram-title">${escapeHtml(item.title || item.file || "Untitled")}</div>
               <div class="diagram-detail">
-                <span class="badge">${escapeHtml(item.shape || "shape")}</span>
-                <span>${escapeHtml(item.type || "flowchart")}</span>
+                <span class="badge">${escapeHtml(diagramKind)}</span>
+                <span>${escapeHtml(mermaidType)}</span>
               </div>
             `;
             button.addEventListener("click", () => {
@@ -687,8 +704,9 @@ __TECHNE_SVG_PAN_ZOOM_JS__
         function renderMeta(item) {
           const sourceFiles = Array.isArray(item.sourceFiles) ? item.sourceFiles : [];
           const values = [
+            ["kind", getDiagramKind(item)],
             ["shape", item.shape],
-            ["type", item.type],
+            ["mermaid", getMermaidType(item)],
             ["coverage", item.coverage],
             ["nodes", item.nodeCount],
             ["generated", formatDate(item.generatedAt)],
@@ -730,7 +748,7 @@ __TECHNE_SVG_PAN_ZOOM_JS__
           destroyPanZoom();
           configureMermaid();
           titleEl.textContent = item.title || item.file || "Untitled diagram";
-          subtitleEl.textContent = `${item.shape || "unknown"} / ${item.type || "flowchart"}`;
+          subtitleEl.textContent = `${getDiagramKind(item)} / ${getMermaidType(item)}`;
           renderMeta(item);
           canvasEl.innerHTML = "";
           try {

@@ -1,6 +1,6 @@
 ---
 name: viz
-description: Draw a faithful architecture or structure diagram of a real codebase or project by scanning the actual repo, never guessing. Use for system architecture, draw the architecture, map this project, 画架构图.
+description: Draw a faithful architecture or structure diagram of a real codebase or project by scanning the actual repo, never guessing. Use for system architecture, request lifecycle, data model, state transitions, type structure, draw the architecture, map this project, 画架构图.
 ---
 
 # viz
@@ -10,40 +10,62 @@ real investigation before drawing.
 
 ## Forced Procedure
 
-1. **Find roots.** Enumerate top-level manifest, workspace, build, native,
-   container, edge, infra, and source-only signals before deciding shape. Use the
-   catalog in [reference.md](reference.md) when the project is not obvious.
-2. **Classify shape.** State one classification and cite evidence:
-   `single-frontend`, `single-backend`, `coupled-fullstack`, `monorepo`,
-   `library`, `native`, `native+edge`, `source-only code`, or `non-code`.
-3. **Apply the non-code decision.** Never declare non-code only because manifests
+1. **Route the request.** Choose one `diagramKind` from the table below. If the
+   user's intent fits multiple kinds, ask one short clarification instead of
+   guessing.
+2. **Find evidence for that kind.** For `architecture`, enumerate roots,
+   manifests, workspace/build/native/container/edge/infra/source-only signals.
+   For other kinds, find the bounded entrypoint, schema, state enum, workflow,
+   or module/type namespace before drawing.
+3. **Classify shape or scope.** For `architecture`, state one project shape and
+   cite evidence: `single-frontend`, `single-backend`, `coupled-fullstack`,
+   `monorepo`, `library`, `native`, `native+edge`, `source-only code`, or
+   `non-code`. For other kinds, state the bounded scope and the files that prove
+   it.
+4. **Apply the non-code decision.** Never declare non-code only because manifests
    are absent. First scan roots; then run a bounded source-extension/code-signal
    scan. If both are absent, or docs/vault signals clearly dominate, do not
-   fabricate an architecture. Draw the real top-level structure or ask what the
-   user wants. If source signals exist without manifests, classify as
-   `source-only code` and draw cautiously from real files.
-4. **Choose top-level components.** Use real packages, modules, apps, services,
-   and infrastructure units. Do not turn individual files into architecture
-   nodes unless the project is genuinely source-only and tiny.
-5. **Draw real edges.** Every edge must come from a file read: imports between
-   packages, build/workspace dependencies, HTTP/RPC clients, compose networks,
-   queues, database access, or edge bindings. No unsupported edges.
-6. **Enforce altitude.** Target 12-15 top-level nodes. If there are more, group
-   them in Mermaid `subgraph` blocks or create a drill-down diagram. The
-   validator/store helper has a node-count gate; do not route around it.
-7. **Mark provenance.** Solid Mermaid edges mean read-from-code. Dashed edges
-   (`-. infer .->`) mean inference. Record sources in stored metadata and, when
-   useful, in comments near the diagram.
+   fabricate a code diagram. Draw the real top-level structure or ask what the
+   user wants.
+5. **Draw only evidenced relationships.** Use the evidence contract for the
+   selected kind. Every node, participant, entity, state, type, and edge/message
+   must come from a file read.
+6. **Enforce complexity gates.** Keep `architecture` at 12-15 top-level nodes by
+   default. For other kinds, use the validator's participant/message,
+   entity/relationship, state/transition, or type/member limits. Split into
+   drill-down diagrams when needed.
+7. **Mark provenance.** Solid relationships mean read-from-code. Dashed
+   relationships mean inference only where Mermaid has a clean weak/dashed form.
+   For ER/class diagrams, exclude inferred relationships by default unless the
+   user explicitly asks for likely edges; if included, label them visibly.
 8. **Emit, validate, store, build viewer, open when interactive.** Write Mermaid
    source first, validate it, store it with `scripts/store_viz.py`, always build
    the self-contained viewer, and only open it when the session is interactive.
+
+## Diagram Routing
+
+| User intent | `diagramKind` | Mermaid `type` | Evidence focus |
+| --- | --- | --- | --- |
+| Project architecture, module/service/package topology | `architecture` | `flowchart` / `graph` | Manifests, workspaces, imports, services, bindings, infra edges. |
+| Request lifecycle, command/job flow, actor conversation | `interaction` | `sequenceDiagram` | Entrypoint, ordered calls/messages, handlers, clients, queues. |
+| Tables, entities, persistence relationships | `data-model` | `erDiagram` | Schema, migrations, ORM/entity declarations, foreign keys, associations. |
+| Status/order/task/review lifecycle | `state-model` | `stateDiagram-v2` / `stateDiagram` | Status constants, state machines, reducers, guards, transition handlers. |
+| Classes, interfaces, structs, protocols, bounded type structure | `type-structure` | `classDiagram` | Type declarations, inheritance, implementation, composition, public method groups. |
+
+Examples:
+
+- "map this project" -> `architecture`.
+- "show how login request flows" -> `interaction`.
+- "draw the database relationships" -> `data-model`.
+- "how does order status change" -> `state-model`.
+- "show the public types in this module" -> `type-structure`.
 
 ## Script Usage
 
 - Validate Mermaid and altitude:
   `node skills/viz/scripts/validate-mermaid.mjs diagram.md --max-nodes 15`
 - Store a diagram in a target project:
-  `python3 skills/viz/scripts/store_viz.py --project /path/to/project --name architecture --title "Architecture" --diagram diagram.md --shape monorepo --type flowchart --source src/app.ts --coverage grounded --node-count 8`
+  `python3 skills/viz/scripts/store_viz.py --project /path/to/project --name login-flow --title "Login flow" --diagram diagram.md --shape monorepo --diagram-kind interaction --type sequenceDiagram --source src/app.ts --coverage grounded`
 - Build the self-contained viewer, opening it only when interactive:
   `python3 skills/viz/scripts/build_viewer.py --project /path/to/project --open`
 
@@ -54,8 +76,11 @@ current working directory, or an ancestor directory.
 ## Stop Conditions
 
 - Stop and ask if you cannot inspect the project files.
+- Stop and ask if the requested diagram kind is ambiguous.
 - Stop before drawing unsupported architecture for a non-code project.
-- Stop before storing a diagram that fails syntax validation or the altitude
+- Stop before drawing a non-architecture diagram without a bounded entrypoint,
+  schema, status lifecycle, or module/type scope.
+- Stop before storing a diagram that fails syntax validation or a complexity
   gate.
 - Do not create `.techne/` content inside this repository while authoring the
   skill itself.
