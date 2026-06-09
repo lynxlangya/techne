@@ -20,6 +20,7 @@ updated: 2026-06-09
 - When adding skills, agents, docs, or examples, include the intended usage, constraints, and a direct validation path.
 - Prefer small, reviewable directory structures over broad future-facing abstractions until the repo has repeated patterns.
 - Keep one tool-neutral skill body in `skills/`; host-specific files should stay as thin skins or install instructions that point back to that body.
+- Keep public-facing documentation English-first with a Chinese companion section for the same user-facing content. For real skills, keep executable instructions in `SKILL.md` and human usage guidance in a nearby `README.md`.
 - Do not commit generated `.techne/` viewer output. `skills/viz/scripts/build_viewer.py` writes `.techne/viz/index.html` inside target projects only.
 - Do not commit secrets, tokens, private config, `.env` contents, or logs that may contain credentials.
 

@@ -11,6 +11,7 @@ Use a flat directory per skill:
 skills/
   <name>/
     SKILL.md
+    README.md      # recommended for real skills
     eval.md        # optional
     scripts/       # optional
     reference.md   # optional
@@ -24,7 +25,8 @@ Current real skills:
 
 - `viz`: investigate a real codebase by diagramming it. It is a typed diagram
   router over architecture, interaction, data-model, state-model, and
-  type-structure diagrams.
+  type-structure diagrams. See [viz/README.md](viz/README.md) for human-facing
+  usage.
 
 ## Skill Body
 
@@ -36,6 +38,10 @@ or future host paths without becoming separate products.
 Every real techne skill should force a move the model would otherwise skip. Do
 not add skills that only recite general knowledge or clone a built-in platform
 capability without a sharper acceptance test.
+
+For real skills, keep human-facing usage guidance in `README.md` beside the
+skill. Keep `SKILL.md` focused on the procedure the model must execute. Public
+usage docs should be English-first with a Chinese companion section.
 
 ## Eval Convention
 
