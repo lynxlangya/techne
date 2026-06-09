@@ -19,6 +19,15 @@ SVG_PAN_ZOOM = VIEWER_ROOT / "svg-pan-zoom.min.js"
 
 FENCE_PATTERN = re.compile(r"```(?:mermaid|mmd)\s*\n([\s\S]*?)```", re.IGNORECASE)
 SCRIPT_END_PATTERN = re.compile(r"</(script)", re.IGNORECASE)
+TYPE_TO_KIND = {
+    "flowchart": "architecture",
+    "graph": "architecture",
+    "sequenceDiagram": "interaction",
+    "erDiagram": "data-model",
+    "stateDiagram-v2": "state-model",
+    "stateDiagram": "state-model",
+    "classDiagram": "type-structure",
+}
 
 
 def extract_mermaid(text: str) -> str:
@@ -56,6 +65,8 @@ def load_diagrams(viz_dir: Path, index: dict) -> list[dict]:
             raise SystemExit(f"Indexed diagram file is empty after Mermaid extraction: {target}")
         record = dict(item)
         record["file"] = file_name
+        record["type"] = record.get("type") or "flowchart"
+        record["diagramKind"] = record.get("diagramKind") or TYPE_TO_KIND.get(record["type"], "unknown")
         record["raw"] = raw
         record["source"] = source
         record["exportName"] = safe_export_name(target.stem or f"diagram-{position + 1}")
