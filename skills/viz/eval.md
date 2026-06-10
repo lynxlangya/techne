@@ -72,3 +72,33 @@ source-only code.
 
 Codex can run only the mechanical checks. Claude and the maintainer must judge
 whether the diagrams are faithful to private/local source evidence.
+
+## Mechanical Provenance Fixtures
+
+Run these with temporary fixture projects only. Do not commit generated
+`.techne/` output.
+
+| # | Fixture | Expected |
+| --- | --- | --- |
+| A | Fabricated diagram with `techne:source` paths that do not exist | Validator exit 1 with missing paths; store refuses. |
+| B | Real paths but fabricated symbols | Validator exit 1 with `symbol_not_found`. |
+| C | Valid diagram with zero annotations | Validator exit 1 with uncovered elements. |
+| D | Small real fixture project, every element annotated with real path+symbol | Validator exit 0; store succeeds; index has computed coverage and derived `sourceFiles`. |
+| E | Fixture D plus one `techne:inferred` edge whose endpoints are sourced | Passes with `inferred: 1` in coverage. |
+| F | Annotation references an element ID not present in the diagram | Validator exit 1. |
+| G | Path escapes project root | Validator exit 1. |
+| H | Valid five-kind fixtures without `--project` | Still validate with `provenance.verified: false`. |
+| I | All elements marked only as `techne:inferred` | Validator exit 1 because entity-like elements require source. |
+| J | Inferred edge whose endpoint lacks a verified source | Validator exit 1. |
+| K | Architecture node cites an existing directory | Passes as `pathVerified`. |
+| L | Architecture edge cites a directory | Validator exit 1. |
+| M | Non-architecture element cites a directory | Validator exit 1. |
+| N | Store called with stale `--node-count` | Rejected as an unknown argument. |
+| O | `node` or validator dependencies missing | Store exits non-zero with an actionable message. |
+| P | Unknown `%% techne:*` directive | Validator exit 1. |
+| Q | Every element cites existing `README.md` path-only | Validator exit 1 because relationship-like elements require `#symbol`. |
+| R | Relationship-like `techne:source` without `#symbol` | Validator exit 1. |
+| S | `actor User` cites a real route/handler file path-only | Passes as `pathVerified`. |
+| T | `participant BillingService` cites a broad real file without symbol | Validator exit 1. |
+| U | Store called with stale `--diagram-kind` or `--type` | Rejected as unknown arguments. |
+| V | `sequenceDiagram` stored successfully | Index records `diagramKind: interaction` and `type: sequenceDiagram` from validator output. |

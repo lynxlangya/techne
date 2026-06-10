@@ -2,18 +2,16 @@
 import argparse
 import json
 import re
+import shutil
+import subprocess
+import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
 
-COMPATIBLE_TYPES = {
-    "architecture": {"flowchart", "graph"},
-    "interaction": {"sequenceDiagram"},
-    "data-model": {"erDiagram"},
-    "state-model": {"stateDiagram-v2", "stateDiagram"},
-    "type-structure": {"classDiagram"},
-}
-SUPPORTED_TYPES = {mermaid_type for mermaid_types in COMPATIBLE_TYPES.values() for mermaid_type in mermaid_types}
+SCRIPT_ROOT = Path(__file__).resolve().parent
+VALIDATOR = SCRIPT_ROOT / "validate-mermaid.mjs"
+
 
 def slugify(value: str) -> str:
     slug = re.sub(r"[^a-zA-Z0-9]+", "-", value.strip().lower()).strip("-")
@@ -35,18 +33,87 @@ def load_index(index_path: Path) -> dict:
     return json.loads(index_path.read_text(encoding="utf-8"))
 
 
-def resolve_diagram_kind(diagram_kind, mermaid_type):
-    if mermaid_type not in SUPPORTED_TYPES:
-        allowed = ", ".join(sorted(SUPPORTED_TYPES))
-        raise SystemExit(f"Unsupported --type {mermaid_type}; expected one of: {allowed}")
-    if diagram_kind is None:
-        if mermaid_type in {"flowchart", "graph"}:
-            return "architecture"
-        raise SystemExit(f"--diagram-kind is required when --type is {mermaid_type}")
-    if mermaid_type not in COMPATIBLE_TYPES[diagram_kind]:
-        allowed = ", ".join(sorted(COMPATIBLE_TYPES[diagram_kind]))
-        raise SystemExit(f"--diagram-kind {diagram_kind} is not compatible with --type {mermaid_type}; expected one of: {allowed}")
-    return diagram_kind
+def validator_command(args: argparse.Namespace, project: Path) -> list[str]:
+    node = shutil.which("node")
+    if not node:
+        raise SystemExit(
+            "Node.js is required to store techne viz diagrams because store_viz.py "
+            "runs validate-mermaid.mjs with provenance enforcement. Install Node.js "
+            "and mermaid@11.15.0/jsdom, or set TECHNE_VIZ_NODE_MODULES."
+        )
+    if not VALIDATOR.is_file():
+        raise SystemExit(f"Mermaid validator not found next to store_viz.py: {VALIDATOR}")
+    command = [
+        node,
+        str(VALIDATOR),
+        str(args.diagram),
+        "--project",
+        str(project),
+        "--max-nodes",
+        str(args.max_nodes),
+        "--max-participants",
+        str(args.max_participants),
+        "--max-messages",
+        str(args.max_messages),
+        "--max-entities",
+        str(args.max_entities),
+        "--max-relationships",
+        str(args.max_relationships),
+        "--max-states",
+        str(args.max_states),
+        "--max-transitions",
+        str(args.max_transitions),
+        "--max-types",
+        str(args.max_types),
+        "--max-member-lines",
+        str(args.max_member_lines),
+    ]
+    if args.grouped:
+        command.append("--grouped")
+    if args.split:
+        command.append("--split")
+    return command
+
+
+def parse_validator_payload(text: str) -> dict | None:
+    text = text.strip()
+    if not text:
+        return None
+    try:
+        return json.loads(text)
+    except json.JSONDecodeError:
+        return None
+
+
+def run_validator(args: argparse.Namespace, project: Path) -> dict:
+    result = subprocess.run(
+        validator_command(args, project),
+        text=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        check=False,
+    )
+    if result.returncode != 0:
+        stderr = result.stderr.strip()
+        stdout = result.stdout.strip()
+        payload = parse_validator_payload(stderr) or parse_validator_payload(stdout)
+        if payload:
+            raise SystemExit("Mermaid validation failed:\n" + json.dumps(payload, indent=2, ensure_ascii=False))
+        message = stderr or stdout or f"validator exited with status {result.returncode}"
+        raise SystemExit("Mermaid validation failed:\n" + message)
+    payload = parse_validator_payload(result.stdout)
+    if not payload:
+        raise SystemExit("Mermaid validation failed: validator did not return JSON")
+    return payload
+
+
+def derived_node_count(validation: dict) -> int | None:
+    counts = validation.get("counts") or {}
+    for key in ("topLevelNodes", "participants", "entities", "states", "types"):
+        value = counts.get(key)
+        if isinstance(value, int):
+            return value
+    return None
 
 
 def main() -> None:
@@ -56,16 +123,15 @@ def main() -> None:
     parser.add_argument("--title", required=True)
     parser.add_argument("--diagram", required=True, type=Path)
     parser.add_argument("--shape", required=True)
-    parser.add_argument(
-        "--diagram-kind",
-        choices=sorted(COMPATIBLE_TYPES),
-        help="Cognitive diagram kind; required for non-architecture Mermaid types.",
-    )
-    parser.add_argument("--type", default="flowchart")
-    parser.add_argument("--source", action="append", default=[])
-    parser.add_argument("--coverage", default="grounded")
-    parser.add_argument("--node-count", type=int)
     parser.add_argument("--max-nodes", type=int, default=15)
+    parser.add_argument("--max-participants", type=int, default=8)
+    parser.add_argument("--max-messages", type=int, default=20)
+    parser.add_argument("--max-entities", type=int, default=12)
+    parser.add_argument("--max-relationships", type=int, default=20)
+    parser.add_argument("--max-states", type=int, default=12)
+    parser.add_argument("--max-transitions", type=int, default=20)
+    parser.add_argument("--max-types", type=int, default=12)
+    parser.add_argument("--max-member-lines", type=int, default=30)
     parser.add_argument("--grouped", action="store_true")
     parser.add_argument("--split", action="store_true")
     args = parser.parse_args()
@@ -73,11 +139,7 @@ def main() -> None:
     project = args.project.resolve()
     if not project.is_dir():
         raise SystemExit(f"Project directory does not exist: {project}")
-    diagram_kind = resolve_diagram_kind(args.diagram_kind, args.type)
-    if diagram_kind == "architecture" and args.node_count and args.node_count > args.max_nodes and not (args.grouped or args.split):
-        raise SystemExit(
-            f"Node count {args.node_count} exceeds max {args.max_nodes}; group into subgraphs or mark --grouped/--split"
-        )
+    validation = run_validator(args, project)
     viz_dir = project / ".techne" / "viz"
     viz_dir.mkdir(parents=True, exist_ok=True)
 
@@ -93,13 +155,14 @@ def main() -> None:
         {
             "title": args.title,
             "file": output.name,
-            "diagramKind": diagram_kind,
-            "type": args.type,
-            "sourceFiles": args.source,
+            "diagramKind": validation.get("diagramKind"),
+            "type": validation.get("mermaidType") or validation.get("diagramType"),
+            "sourceFiles": validation.get("sourceFiles") or [],
             "generatedAt": datetime.now(timezone.utc).isoformat(),
             "shape": args.shape,
-            "coverage": args.coverage,
-            "nodeCount": args.node_count,
+            "coverage": validation.get("coverage"),
+            "nodeCount": derived_node_count(validation),
+            "topLevelNodes": (validation.get("counts") or {}).get("topLevelNodes"),
             "grouped": args.grouped,
             "split": args.split,
         }
@@ -112,4 +175,7 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except BrokenPipeError:
+        sys.exit(1)

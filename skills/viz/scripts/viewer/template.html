@@ -707,7 +707,7 @@ __TECHNE_SVG_PAN_ZOOM_JS__
             ["kind", getDiagramKind(item)],
             ["shape", item.shape],
             ["mermaid", getMermaidType(item)],
-            ["coverage", item.coverage],
+            ["coverage", formatCoverage(item.coverage)],
             ["nodes", item.nodeCount],
             ["generated", formatDate(item.generatedAt)],
             ["sources", sourceFiles.length ? sourceFiles.join(", ") : null],
@@ -717,6 +717,19 @@ __TECHNE_SVG_PAN_ZOOM_JS__
             .filter((entry) => entry[1] !== undefined && entry[1] !== null && entry[1] !== "")
             .map(([label, value]) => `<span class="meta-pill">${escapeHtml(label)}: ${escapeHtml(String(value))}</span>`)
             .join("");
+        }
+
+        function formatCoverage(value) {
+          if (!value) return null;
+          if (typeof value === "string") return value;
+          if (typeof value !== "object") return String(value);
+          const ratio = typeof value.ratio === "number" ? `${Math.round(value.ratio * 100)}%` : null;
+          const parts = [];
+          if (typeof value.symbolVerified === "number") parts.push(`symbol ${value.symbolVerified}`);
+          if (typeof value.pathVerified === "number") parts.push(`path ${value.pathVerified}`);
+          if (typeof value.inferred === "number") parts.push(`inferred ${value.inferred}`);
+          if (typeof value.uncovered === "number" && value.uncovered > 0) parts.push(`uncovered ${value.uncovered}`);
+          return [ratio, parts.join(" / ")].filter(Boolean).join(" - ");
         }
 
         function formatDate(value) {

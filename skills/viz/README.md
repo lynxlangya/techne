@@ -62,7 +62,8 @@ A good run should show:
 - The selected `diagramKind`.
 - The repository shape or bounded scope.
 - The evidence files read before drawing.
-- Mermaid source that passes validation.
+- Mermaid source with `%% techne:source` / `%% techne:inferred`
+  provenance comments that passes validation.
 - Stored output under `.techne/viz/` in the target project.
 - A self-contained `.techne/viz/index.html` viewer.
 
@@ -160,12 +161,34 @@ without a local server or network request:
 open .techne/viz/index.html
 ```
 
+## Script Usage
+
+Validate against a target project so provenance is enforced:
+
+```bash
+node skills/viz/scripts/validate-mermaid.mjs diagram.md --project /path/to/project --max-nodes 15
+```
+
+Store a diagram. `store_viz.py` runs the validator itself and derives
+`diagramKind`, `type`, `sourceFiles`, `coverage`, and `nodeCount`; do not pass
+self-reported source or coverage metadata:
+
+```bash
+python3 skills/viz/scripts/store_viz.py \
+  --project /path/to/project \
+  --name login-flow \
+  --title "Login flow" \
+  --diagram diagram.md \
+  --shape monorepo
+```
+
 ## What to Check
 
 When testing `viz`, judge the run by evidence, not by visual polish alone:
 
 - Did it pick the correct `diagramKind`?
-- Did it cite the files that prove the nodes and relationships?
+- Did every node, participant, entity, state, type, edge, message, relationship,
+  or transition have valid provenance?
 - Did it avoid invented modules, messages, states, entities, or type links?
 - Did it keep the diagram readable or split the scope?
 - Did Mermaid validation pass?

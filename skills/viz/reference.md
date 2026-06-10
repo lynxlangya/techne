@@ -157,17 +157,47 @@ requested, label them visibly.
 
 ## Provenance Conventions
 
-Represent provenance:
+Provenance is mandatory when validating or storing against a project root. Use
+render-neutral Mermaid comments:
 
-- Solid relationship/message: read-from-code fact.
-- Dashed relationship/message: inference only where the Mermaid type supports a
-  clean weak/dashed form.
-- Annotated inference: use labels such as `inferred:` when Mermaid has no clean
-  dashed/weak relationship syntax.
-- Edge/message labels: name protocol, import, binding, trigger, method, or
-  source fact briefly.
-- Comments: use `%% source: path/to/file` near relevant parts when helpful.
-- Metadata: rely on `.index.json` for full source file lists and coverage.
+```mermaid
+%% techne:source <elementRef> <path>[#<symbol>]
+%% techne:inferred <relationshipRef> <reason>
+```
+
+`<elementRef>` is a node, participant, entity, state, or type ID. Relationship
+refs use the written ordered pair: `<from>-><to>`. State transitions may use
+`[*]` literally, for example `[*]->Queued`.
+
+Citation strength rules:
+
+| Citation form | Valid for |
+| --- | --- |
+| Directory, no symbol | `architecture` nodes only. |
+| File path-only | `architecture` nodes and sequence participants declared with `actor`. |
+| File `#symbol` | Everything; required for all relationship-like elements and all non-architecture entity-like elements except `actor` participants. |
+
+Symbols are split at the first `#`, matched literally and case-sensitively in
+the cited file. Use real evidence tokens such as function names, route names,
+package names, dependency strings, config keys, table names, enum cases, or type
+names. Do not use broad common words merely because they grep.
+
+External systems cite the file that proves the dependency, such as a client
+initializer, manifest, container config, or binding. Relationship-like evidence
+still needs `#symbol`, for example `docker-compose.yml#postgres`.
+
+Human participants in sequence diagrams should be declared with `actor` and may
+cite the entrypoint that serves them path-only. Service/module participants must
+use `participant` or implicit participant syntax and require `#symbol`.
+
+`techne:inferred` is valid only for relationship-like elements whose endpoints
+are already sourced. Exclude inferred ER/class relationships by default unless
+the user explicitly asks for likely edges; when included, label them visibly.
+Ordinary `%%` comments are ignored, but unknown `%% techne:*` directives fail
+validation.
+
+Computed `.index.json` metadata comes from the validator: `sourceFiles`,
+`coverage`, `nodeCount`, `diagramKind`, and `type` are derived, not declared.
 
 Use `subgraph` for grouping when top-level nodes exceed the cap. If grouping
 would hide important structure, split into a drill-down diagram and mark
