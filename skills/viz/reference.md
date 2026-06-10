@@ -155,6 +155,21 @@ Keep scope bounded to one module/package unless the user asks otherwise. Read:
 Exclude inferred type relationships by default. If likely/inferred edges are
 requested, label them visibly.
 
+## Output Language
+
+Match human-facing output to the user's primary language:
+
+- Use the user's language for diagram titles, display labels, relationship or
+  message labels, shape notes, and short explanations.
+- If the user mixes languages, follow the dominant language of the request.
+- Preserve source-native text for Mermaid IDs, paths, symbols, package names,
+  class/function/module names, framework names, protocol names, and established
+  technical terms.
+- Prefer stable ASCII Mermaid IDs with localized display labels when needed:
+  `API["API gateway"]` for English, `API["API 网关"]` for Chinese.
+- Do not translate evidence anchors. `%% techne:source API
+  services/gateway.ts#authClient` should stay tied to source text.
+
 ## Provenance Conventions
 
 Provenance is mandatory when validating or storing against a project root. Use

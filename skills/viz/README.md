@@ -62,6 +62,9 @@ A good run should show:
 - The selected `diagramKind`.
 - The repository shape or bounded scope.
 - The evidence files read before drawing.
+- Diagram titles and labels in the user's language, while code identifiers,
+  paths, symbols, package names, and established technical terms stay
+  source-native.
 - Mermaid source with `%% techne:source` / `%% techne:inferred`
   provenance comments that passes validation.
 - Stored output under `.techne/viz/` in the target project.
@@ -82,6 +85,15 @@ project's `.gitignore` when needed.
 
 If your request fits multiple kinds, `viz` should ask one clarification instead
 of guessing.
+
+## Language Behavior
+
+`viz` follows the user's language for human-facing text. Ask in English and the
+diagram title, display labels, and short explanations should be English. Ask in
+Chinese and those user-facing labels should be Chinese. Code-facing evidence
+stays as written in the repository: paths, Mermaid IDs, symbols, class/function
+names, package names, and terms such as API, SDK, CLI, HTTP, SwiftUI, AppKit,
+and React are not forced through translation.
 
 ## Prompt Recipes
 

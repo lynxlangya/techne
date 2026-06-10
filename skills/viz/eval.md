@@ -40,6 +40,8 @@ Invoke `viz` on the same repos. The skill must:
 - Route to the correct `diagramKind`, or ask one clarification when ambiguous.
 - Classify shape with evidence.
 - State bounded scope for non-architecture diagrams.
+- Match user-facing diagram text to the user's primary language while preserving
+  source-native code identifiers and evidence anchors.
 - Avoid fabricating nodes, participants, entities, states, types, edges,
   messages, relationships, or transitions.
 - Use the non-code branch for the notes vault.
@@ -50,6 +52,9 @@ Invoke `viz` on the same repos. The skill must:
 ## Metrics
 
 - Routing correctness: selected `diagramKind` matches user intent and evidence.
+- Language fit: human-facing titles, labels, and explanations follow the user's
+  language; paths, symbols, package names, and code identifiers stay
+  source-native.
 - Fabrication rate: target approximately zero fabricated diagram elements.
 - Shape correctness: project classification matches evidence.
 - Architecture: modules/services/boundaries match source evidence.
@@ -66,9 +71,9 @@ Invoke `viz` on the same repos. The skill must:
 
 Pass only if with-`viz` has approximately zero fabrications, correct shape,
 correct diagram-kind routing, readable complexity, successful
-validation/rendering, visible improvement over baseline on at least one metric,
-and passes the non-code refuse-to-fabricate case without false-refusing
-source-only code.
+validation/rendering, language fit for user-facing text, visible improvement
+over baseline on at least one metric, and passes the non-code
+refuse-to-fabricate case without false-refusing source-only code.
 
 Codex can run only the mechanical checks. Claude and the maintainer must judge
 whether the diagrams are faithful to private/local source evidence.

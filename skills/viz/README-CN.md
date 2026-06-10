@@ -56,6 +56,7 @@ npx skills update viz -g -y
 - 它选择的 `diagramKind`。
 - 项目形状或本次限定范围。
 - 画图前实际读取的证据文件。
+- 图表标题和展示 label 跟随你的语言；代码标识、路径、symbol、package 名和通用技术词保持源码原文。
 - 带 `%% techne:source` / `%% techne:inferred` provenance 注释、并通过校验的 Mermaid 源码。
 - 目标项目里的 `.techne/viz/*.md`、`.index.json` 和 `index.html`。
 
@@ -70,6 +71,10 @@ npx skills update viz -g -y
 | 表、实体和持久化关系 | `data-model` | `erDiagram` | SQL migration、ORM model、schema。 |
 | 状态或工作流生命周期 | `state-model` | `stateDiagram-v2` / `stateDiagram` | 订单状态、审核流程、reducer、状态机。 |
 | class、interface、protocol、struct 或公开类型 | `type-structure` | `classDiagram` | 某个模块内的类型结构。 |
+
+## 语言行为
+
+`viz` 会跟随用户的主要语言。你用中文提问，图表标题、展示 label、关系说明和简短说明优先中文；你用英文提问，这些面向人的文本就用英文。代码证据保持仓库原文：路径、Mermaid ID、symbol、class/function 名、package 名，以及 API、SDK、CLI、HTTP、SwiftUI、AppKit、React 这类通用技术词不会被强行翻译。
 
 ## 推荐测试方式
 

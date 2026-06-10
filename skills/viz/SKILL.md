@@ -27,14 +27,20 @@ real investigation before drawing.
    scan. If both are absent, or docs/vault signals clearly dominate, do not
    fabricate a code diagram. Draw the real top-level structure or ask what the
    user wants.
-5. **Draw only evidenced relationships.** Use the evidence contract for the
+5. **Match the user's language.** Human-facing diagram text follows the user's
+   primary language: titles, display labels, edge/message labels, shape notes,
+   and short explanations. Keep code-facing identifiers source-native: Mermaid
+   IDs, file paths, symbols, package names, class/function/module names, and
+   established technical terms such as API, SDK, CLI, HTTP, SwiftUI, AppKit, or
+   React.
+6. **Draw only evidenced relationships.** Use the evidence contract for the
    selected kind. Every node, participant, entity, state, type, and edge/message
    must come from a file read.
-6. **Enforce complexity gates.** Keep `architecture` at 12-15 top-level nodes by
+7. **Enforce complexity gates.** Keep `architecture` at 12-15 top-level nodes by
    default. For other kinds, use the validator's participant/message,
    entity/relationship, state/transition, or type/member limits. Split into
    drill-down diagrams when needed.
-7. **Mark provenance.** Add render-neutral comments for every element before
+8. **Mark provenance.** Add render-neutral comments for every element before
    storing:
    `%% techne:source <elementRef> <path>[#<symbol>]` or, for relationship-like
    elements only, `%% techne:inferred <relationshipRef> <reason>`. Entity-like
@@ -44,7 +50,7 @@ real investigation before drawing.
    is mechanically scoped. Solid relationships mean read-from-code. Dashed or
    labeled relationships mean inference only where the selected Mermaid type
    supports it.
-8. **Emit, validate, store, build viewer, open when interactive.** Write Mermaid
+9. **Emit, validate, store, build viewer, open when interactive.** Write Mermaid
    source first, validate it, store it with `scripts/store_viz.py`, always build
    the self-contained viewer, and only open it when the session is interactive.
 
