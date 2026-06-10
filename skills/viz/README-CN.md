@@ -56,7 +56,7 @@ npx skills update viz -g -y
 - 它选择的 `diagramKind`。
 - 项目形状或本次限定范围。
 - 画图前实际读取的证据文件。
-- 通过校验的 Mermaid 源码。
+- 带 `%% techne:source` / `%% techne:inferred` provenance 注释、并通过校验的 Mermaid 源码。
 - 目标项目里的 `.techne/viz/*.md`、`.index.json` 和 `index.html`。
 
 不要把 `.techne/` 提交进项目仓库。
@@ -133,12 +133,33 @@ npx skills update viz -g -y
 open .techne/viz/index.html
 ```
 
+## 脚本用法
+
+带目标项目校验 Mermaid，这样 provenance 会被真实检查：
+
+```bash
+node skills/viz/scripts/validate-mermaid.mjs diagram.md --project /path/to/project --max-nodes 15
+```
+
+写入目标项目。`store_viz.py` 会自己运行 validator，并派生
+`diagramKind`、`type`、`sourceFiles`、`coverage` 和 `nodeCount`；不要再传自报的
+source 或 coverage：
+
+```bash
+python3 skills/viz/scripts/store_viz.py \
+  --project /path/to/project \
+  --name login-flow \
+  --title "Login flow" \
+  --diagram diagram.md \
+  --shape monorepo
+```
+
 ## 结果检查
 
 测试时重点看：
 
 - 是否选对图表类型。
-- 节点和关系是否都有文件证据。
+- 每个节点、participant、entity、state、type、edge、message、relationship 或 transition 是否都有有效 provenance。
 - 有没有编造模块、调用、状态、实体或类型关系。
 - 图是否被控制在可读复杂度内。
 - Mermaid 是否通过校验。

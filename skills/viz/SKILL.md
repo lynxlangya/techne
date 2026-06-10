@@ -34,10 +34,16 @@ real investigation before drawing.
    default. For other kinds, use the validator's participant/message,
    entity/relationship, state/transition, or type/member limits. Split into
    drill-down diagrams when needed.
-7. **Mark provenance.** Solid relationships mean read-from-code. Dashed
-   relationships mean inference only where Mermaid has a clean weak/dashed form.
-   For ER/class diagrams, exclude inferred relationships by default unless the
-   user explicitly asks for likely edges; if included, label them visibly.
+7. **Mark provenance.** Add render-neutral comments for every element before
+   storing:
+   `%% techne:source <elementRef> <path>[#<symbol>]` or, for relationship-like
+   elements only, `%% techne:inferred <relationshipRef> <reason>`. Entity-like
+   elements always need verified `techne:source`; relationship-like elements
+   need file+symbol proof unless explicitly inferred with sourced endpoints.
+   Use `actor` for human sequence participants so the actor path-only allowance
+   is mechanically scoped. Solid relationships mean read-from-code. Dashed or
+   labeled relationships mean inference only where the selected Mermaid type
+   supports it.
 8. **Emit, validate, store, build viewer, open when interactive.** Write Mermaid
    source first, validate it, store it with `scripts/store_viz.py`, always build
    the self-contained viewer, and only open it when the session is interactive.
@@ -63,9 +69,9 @@ Examples:
 ## Script Usage
 
 - Validate Mermaid and altitude:
-  `node skills/viz/scripts/validate-mermaid.mjs diagram.md --max-nodes 15`
+  `node skills/viz/scripts/validate-mermaid.mjs diagram.md --project /path/to/project --max-nodes 15`
 - Store a diagram in a target project:
-  `python3 skills/viz/scripts/store_viz.py --project /path/to/project --name login-flow --title "Login flow" --diagram diagram.md --shape monorepo --diagram-kind interaction --type sequenceDiagram --source src/app.ts --coverage grounded`
+  `python3 skills/viz/scripts/store_viz.py --project /path/to/project --name login-flow --title "Login flow" --diagram diagram.md --shape monorepo`
 - Build the self-contained viewer, opening it only when interactive:
   `python3 skills/viz/scripts/build_viewer.py --project /path/to/project --open`
 
@@ -80,7 +86,7 @@ current working directory, or an ancestor directory.
 - Stop before drawing unsupported architecture for a non-code project.
 - Stop before drawing a non-architecture diagram without a bounded entrypoint,
   schema, status lifecycle, or module/type scope.
-- Stop before storing a diagram that fails syntax validation or a complexity
-  gate.
+- Stop before storing a diagram that fails syntax validation, provenance
+  validation, or a complexity gate.
 - Do not create `.techne/` content inside this repository while authoring the
   skill itself.
