@@ -15,11 +15,14 @@ contains:
   and the universal Agent Skills fallback.
 - `skills/viz/`, the first real skill: a typed diagram router for codebase
   architecture, request interactions, data models, state models, and type
-  structures.
+  structures, with a mechanical provenance gate.
+- `skills/repro/`, the second real skill: a repro-first bugfix gate that forces
+  fail → fix → same-probe verification through a run ledger.
 
 There is still **no root app, no root package manager, no CI, and no repo-wide
 test runner**. `skills/viz/scripts/package.json` only pins helper dependencies
-for that skill's Mermaid validator. Do not infer commands, dependencies, or
+for that skill's Mermaid validator; `skills/repro/scripts/repro_ledger.py` is
+dependency-free Python 3 stdlib (POSIX-only). Do not infer commands, dependencies, or
 architecture from the legacy library; that direction was abandoned.
 
 ## Project intent
@@ -35,7 +38,9 @@ install instructions that point back to that shared body.
 
 ## Current skill surface
 
-`skills/viz` is the active seeded skill.
+Two skills are seeded: `skills/viz` and `skills/repro`.
+
+`skills/viz` (coding/investigate):
 
 - `SKILL.md` forces the cognitive procedure: route the diagram kind, read real
   evidence, draw only evidenced relationships, enforce complexity gates, mark
@@ -44,16 +49,37 @@ install instructions that point back to that shared body.
   `data-model`, `state-model`, and `type-structure`.
 - Supported Mermaid types are `flowchart` / `graph`, `sequenceDiagram`,
   `erDiagram`, `stateDiagram-v2` / `stateDiagram`, and `classDiagram`.
-- `scripts/validate-mermaid.mjs` is parse-only plus counters. It intentionally
-  does **not** call `mermaid.render()` under Node/jsdom; browser rendering is
-  checked through the self-contained file viewer.
-- `scripts/store_viz.py` writes diagrams to a target project's
-  `.techne/viz/*.md` and `.index.json`, and idempotently adds `.techne/` to that
-  target project's `.gitignore`.
+- `scripts/validate-mermaid.mjs` parses and counts, and — with
+  `--project <root>` — mechanically verifies `%% techne:source` /
+  `%% techne:inferred` provenance annotations against the target project
+  (paths, symbols, citation strength) and computes coverage; without
+  `--project` it syntax-checks annotations only. It intentionally does **not**
+  call `mermaid.render()` under Node/jsdom; browser rendering is checked
+  through the self-contained file viewer.
+- `scripts/store_viz.py` runs the validator itself (provenance enforced, no
+  bypass flags) and derives `diagramKind`, `type`, `sourceFiles`, `coverage`,
+  and `nodeCount` from validator output — there are no self-reported metadata
+  flags. It writes diagrams to a target project's `.techne/viz/*.md` and
+  `.index.json`, and idempotently adds `.techne/` to that target project's
+  `.gitignore`.
 - `scripts/build_viewer.py` builds a self-contained `.techne/viz/index.html`.
   It does not start a server.
-- Generated `.techne/` output belongs in target projects and must not be
-  committed to this repository.
+
+`skills/repro` (coding/debug):
+
+- `SKILL.md` forces the cognitive procedure: trigger-check the task as a
+  behavioral bug, capture a stable `--expect` anchor, demonstrate the failure
+  through the ledger before editing, fix, verify with the byte-identical probe
+  identity, then report citing the `close` JSON and strength rung.
+- `scripts/repro_ledger.py` (Python 3 stdlib, POSIX/macOS/Linux only) executes
+  and records probes in a target project's `.techne/repro/<bug>.jsonl`.
+  Classification is computed, never declared: probe identity is
+  `{mode, argv | shellCommand, cwd, timeoutSec}`, and `close` exits 0 only on a
+  fail → later same-identity pass, or on a loud `mark-unreproduced`
+  speculative path.
+
+Generated `.techne/` output (viz and repro alike) belongs in target projects
+and must not be committed to this repository.
 
 ## Development workflow
 
@@ -73,8 +99,8 @@ validator needs `mermaid@11.15.0` and `jsdom` in `TECHNE_VIZ_NODE_MODULES`,
 `skills/viz/scripts/node_modules`, the current directory, or an ancestor:
 
 ```bash
-node skills/viz/scripts/validate-mermaid.mjs diagram.md --max-nodes 15
-python3 skills/viz/scripts/store_viz.py --project /tmp/project --name diagram --title "Diagram" --diagram diagram.md --shape monorepo --diagram-kind architecture --type flowchart
+node skills/viz/scripts/validate-mermaid.mjs diagram.md --project /tmp/project --max-nodes 15
+python3 skills/viz/scripts/store_viz.py --project /tmp/project --name diagram --title "Diagram" --diagram diagram.md --shape monorepo
 python3 skills/viz/scripts/build_viewer.py --project /tmp/project
 git diff --check
 ```
@@ -82,6 +108,15 @@ git diff --check
 For viewer work, also open the generated `file://.../.techne/viz/index.html`
 and verify the relevant diagrams render without console errors or external
 network loads.
+
+For `repro` script changes, exercise the ledger against throwaway `/tmp`
+projects — `skills/repro/eval.md` fixtures A–X are the reference suite:
+
+```bash
+python3 -m py_compile skills/repro/scripts/repro_ledger.py
+python3 skills/repro/scripts/repro_ledger.py run --project /tmp/project --bug demo --expect "boom" -- python3 -c 'print("boom"); raise SystemExit(1)'
+python3 skills/repro/scripts/repro_ledger.py status --project /tmp/project --bug demo
+```
 
 ## Legacy code
 
