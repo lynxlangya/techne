@@ -28,6 +28,10 @@ Current real skills:
   router over architecture, interaction, data-model, state-model, and
   type-structure diagrams. See [viz/README.md](viz/README.md) for human-facing
   usage and [viz/README-CN.md](viz/README-CN.md) for Chinese usage.
+- `repro`: reproduce a behavioral bug before fixing it, record the failing
+  probe, and verify the fix with the same probe. See
+  [repro/README.md](repro/README.md) for human-facing usage and
+  [repro/README-CN.md](repro/README-CN.md) for Chinese usage.
 
 ## Skill Body
 

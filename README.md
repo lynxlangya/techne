@@ -29,13 +29,16 @@ same skill bodies.
   request across architecture, interaction, data-model, state-model, and
   type-structure diagrams, then validates and builds a local viewer. See
   [skills/viz/README.md](skills/viz/README.md) for detailed usage.
+- `repro` — force bug fixes through a failing reproduction first, then verify
+  with the same probe after the fix. See
+  [skills/repro/README.md](skills/repro/README.md) for detailed usage.
 
 ## Install
 
 **Recommended: ask your AI agent.** Paste this into Claude Code or Codex:
 
 ```text
-Install techne for my current agent by following https://github.com/lynxlangya/techne/blob/main/INSTALL.md, then verify the viz skill is available.
+Install techne for my current agent by following https://github.com/lynxlangya/techne/blob/main/INSTALL.md, then verify the techne skills are available.
 ```
 
 The agent reads [INSTALL.md](INSTALL.md), detects your harness (Claude / Codex /
@@ -56,7 +59,7 @@ For Claude Code:
 For Codex:
 
 ```bash
-npx skills add lynxlangya/techne --skill viz -a codex -g -y
+npx skills add lynxlangya/techne -a codex -g -y
 ```
 
 See [WORKFLOW.md](WORKFLOW.md) for the delivery process and

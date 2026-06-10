@@ -27,7 +27,14 @@ Claude Code 原生插件：
 claude plugin update techne
 ```
 
-Codex 使用 Agent Skills：
+Codex 默认请使用根目录 [INSTALL.md](../../INSTALL.md) 的命令，安装完整 techne
+skill set：
+
+```bash
+npx skills add lynxlangya/techne -a codex -g -y
+```
+
+如果你明确只想安装 `viz` 这一个 skill，再使用单 skill 命令：
 
 ```bash
 npx skills add lynxlangya/techne --skill viz -a codex -g -y

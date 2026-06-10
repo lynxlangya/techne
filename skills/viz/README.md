@@ -26,7 +26,14 @@ If techne is already installed in Claude Code:
 claude plugin update techne
 ```
 
-Codex via Agent Skills:
+For normal Codex installs, use the root [INSTALL.md](../../INSTALL.md) command
+to install the whole techne skill set:
+
+```bash
+npx skills add lynxlangya/techne -a codex -g -y
+```
+
+If you intentionally want only `viz`, install the single skill:
 
 ```bash
 npx skills add lynxlangya/techne --skill viz -a codex -g -y

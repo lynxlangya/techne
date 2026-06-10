@@ -9,8 +9,10 @@ the Agent Skills CLI.
 If you were asked to install techne: clone the repo to a stable local path (don't
 run from a throwaway temp dir), detect which harness you're running in, follow the
 matching section below, then verify the skill is available (e.g. `/techne:viz` in
-Claude Code, or the `viz` skill listed by your agent). If you can't tell which
-harness you're in, use the universal `npx skills` fallback.
+Claude Code, or techne skills listed by your agent). If you can't tell which
+harness you're in, use the universal `npx skills` fallback. The default install
+path installs the techne skill set as a package; do not pass `--skill <name>`
+unless you intentionally want only one skill.
 
 ## Claude Code
 
@@ -22,7 +24,8 @@ Native plugin install:
 /reload-plugins
 ```
 
-Use the skill as `/techne:viz`.
+Use skills as `/techne:<skill>`, for example `/techne:viz` or
+`/techne:repro`.
 
 Local development from a clone:
 
@@ -34,11 +37,14 @@ Local development from a clone:
 
 ## Codex
 
-Codex uses Agent Skills for techne. This installs `viz` globally through the
-Skills CLI and makes it available to Codex.
+Codex uses Agent Skills for techne. Install the techne skill set globally
+through the Skills CLI and make the current repository skills available to
+Codex. Re-run this `add` command after techne gains new skills; `skills update`
+only refreshes skills that are already installed.
 
 ```bash
-npx skills add lynxlangya/techne --skill viz -a codex -g -y
+npx skills add lynxlangya/techne -a codex -g -y
+npx skills list -g -a codex
 ```
 
 ## Cursor
@@ -50,7 +56,7 @@ this repository yet.
 Agent Skills fallback:
 
 ```bash
-npx skills add lynxlangya/techne --skill viz -a cursor -g -y
+npx skills add lynxlangya/techne -a cursor -g -y
 ```
 
 ## Gemini CLI
@@ -68,7 +74,7 @@ Real Gemini install is deferred to an environment with Gemini CLI active.
 Agent Skills fallback:
 
 ```bash
-npx skills add lynxlangya/techne --skill viz -a gemini-cli -g -y
+npx skills add lynxlangya/techne -a gemini-cli -g -y
 ```
 
 ## Kimi Code
@@ -76,22 +82,38 @@ npx skills add lynxlangya/techne --skill viz -a gemini-cli -g -y
 Kimi Code uses Agent Skills:
 
 ```bash
-npx skills add lynxlangya/techne --skill viz -a kimi-code-cli -g -y
+npx skills add lynxlangya/techne -a kimi-code-cli -g -y
 ```
 
 ## Universal Agent Skills Fallback
 
-The npm package is `skills` from Vercel Labs. Install one techne skill into a
-supported agent:
+The npm package is `skills` from Vercel Labs. Install the techne skill set into
+a supported agent:
 
 ```bash
-npx skills add lynxlangya/techne --skill <name> -a <agent> -y
+npx skills add lynxlangya/techne -a <agent> -y
 ```
 
 Useful agent ids include `claude-code`, `codex`, `cursor`, `gemini-cli`, and
 `kimi-code-cli`.
 
 Use `-g` for a global install, or omit it to install into the current project.
+
+To inspect the package before installing:
+
+```bash
+npx skills add lynxlangya/techne --list
+```
+
+To install exactly one skill instead of the whole techne set:
+
+```bash
+npx skills add lynxlangya/techne --skill <name> -a <agent> -y
+```
+
+The `_template` directory is an internal authoring template with
+`disable-model-invocation: true`. Some Agent Skills CLI versions may still copy
+it during whole-package installs; it is not a user-facing techne skill.
 
 ## Version Touchpoints
 
