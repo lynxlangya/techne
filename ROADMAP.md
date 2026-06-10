@@ -70,6 +70,10 @@ or contributed by someone who can own the quality bar.
 `viz` is the first real seeded skill. It lives under `skills/viz/` and forces
 codebase investigation through diagramming.
 
+`repro` is the second real seeded skill and the first `coding/debug` skill. It
+lives under `skills/repro/` and forces behavioral bug fixes through a mechanical
+fail -> fix -> same-probe verification ledger.
+
 Current supported diagram kinds:
 
 - `architecture`: project/module/service topology via Mermaid `flowchart` /
