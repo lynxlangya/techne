@@ -4,6 +4,16 @@
 mechanical fixtures test the ledger. The empirical gate tests the skill inside a
 real Claude context before merge.
 
+## Acceptance Status
+
+- 2026-06-10 — Mechanical fixtures A–X: **passed**, twice independently — in PR
+  #23's self-check and re-verified in the Claude review (24/24, plus fresh-eyes
+  probes and a realistic end-to-end fail → fix → verify cycle).
+- 2026-06-10 — Empirical acceptance (3 seeded historical bugs, baseline vs
+  skill, controls C1–C3): **not yet run**. PR #23 merged ahead of this gate;
+  the results are owed and will be recorded here and on issue #22 when the
+  protocol runs. Until then, `repro` has not cleared its own empirical bar.
+
 ## Mechanical Fixtures
 
 All fixtures must pass in the PR with throwaway projects under `/tmp`.
