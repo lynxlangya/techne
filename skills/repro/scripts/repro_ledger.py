@@ -324,7 +324,7 @@ def analyze(entries: list[dict]) -> dict:
             "ok": True,
             "verified": False,
             "speculative": True,
-            "reproduced": False,
+            "reproduced": bool(repros),
             "reason": speculative.get("reason"),
             "path": speculative.get("path"),
             "attemptCount": speculative.get("attemptCount"),
@@ -347,8 +347,6 @@ def analyze(entries: list[dict]) -> dict:
     elif anchored_failures and not repros:
         failure = "expect_not_matched"
     elif later_mismatch is not None:
-        failure = "identity_mismatch"
-    elif passing and first_failing is not None and not repros:
         failure = "identity_mismatch"
     else:
         failure = "no_verify"

@@ -107,8 +107,11 @@ python3 /path/to/techne/skills/repro/scripts/repro_ledger.py run \
   --bug locale-sort \
   --shell \
   --expect "sort order is wrong" \
-  -- LC_ALL=C npm test
+  -- 'LC_ALL=C npm test'
 ```
+
+In shell mode, pass the shell command as one quoted token after `--`; the ledger
+runs that string with `sh -c` and uses the same string as identity.
 
 If reproduction is genuinely impossible:
 

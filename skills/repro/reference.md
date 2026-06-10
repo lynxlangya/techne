@@ -34,12 +34,13 @@ humans and is never used for pairing.
 
 Inherited environment is excluded from v1 identity. If the probe depends on an
 environment variable, encode it in shell form so it becomes part of
-`shellCommand`:
+`shellCommand`. Pass the shell command as one quoted token after `--`; tokens
+after `--` are joined with spaces before `sh -c`:
 
 ```bash
 python3 skills/repro/scripts/repro_ledger.py run \
   --project /repo --bug locale-sort --shell --expect "wrong order" -- \
-  LC_ALL=C npm test
+  'LC_ALL=C npm test'
 ```
 
 ## Probe Catalog

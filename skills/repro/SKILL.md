@@ -35,8 +35,9 @@ observation before editing.
    smallest CLI probe that exercises the reported symptom. In workspaces or
    monorepos, run from the package with `--cwd <package-dir>`, not with a
    `cd ... &&` convention. If required environment changes matter, encode them
-   inside `--shell` as `VAR=... command`; inherited environment changes are not
-   part of probe identity in v1.
+   inside `--shell` as one quoted command string such as
+   `'VAR=... command'`; inherited environment changes are not part of probe
+   identity in v1.
 3. **Demonstrate.** Run the probe through
    `scripts/repro_ledger.py run --project <root> --bug <slug> ... -- <command>`.
    Read the failing output and confirm it fails for the reported reason:

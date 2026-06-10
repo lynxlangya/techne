@@ -99,8 +99,11 @@ python3 /path/to/techne/skills/repro/scripts/repro_ledger.py run \
   --bug locale-sort \
   --shell \
   --expect "sort order is wrong" \
-  -- LC_ALL=C npm test
+  -- 'LC_ALL=C npm test'
 ```
+
+shell 模式下，`--` 后面请传一个带引号的完整 shell 命令；ledger 会用
+`sh -c` 执行这个字符串，并把同一个字符串作为 identity。
 
 如果确实无法复现：
 
