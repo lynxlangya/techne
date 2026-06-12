@@ -89,6 +89,10 @@ their own evidence contract and mechanical gate.
 lives under `skills/repro/` and forces behavioral bug fixes through a mechanical
 fail -> fix -> same-probe verification ledger.
 
+`vet` is the third real seeded skill and the `coding/review-diff` seed. It
+lives under `skills/vet/` and forces diff review through computed scope,
+accounted blast radius, verified claims/findings, and admissible verdicts.
+
 ## Packaging Status
 
 techne now ships one shared `skills/` body through multiple thin paths:
