@@ -9,8 +9,8 @@ updated: 2026-06-10
 ## Project Facts
 
 - `techne` is an early-stage skills/plugin repository for "Skills and agents for the AI era."
-- The current `main` branch contains the Claude plugin skin, install matrix docs, Cursor/Gemini thin skins, and two real skills: `skills/viz` (typed diagram router with a mechanical provenance gate) and `skills/repro` (repro-first bugfix ledger).
-- There is still no root app, root package manager, CI, or general test runner. `skills/viz/scripts/package.json` is a local helper manifest for the Mermaid validator, not a repo-wide build system; `skills/repro/scripts/repro_ledger.py` is dependency-free Python 3 stdlib (POSIX-only).
+- The current `main` branch contains the Claude plugin skin, install matrix docs, Cursor/Gemini thin skins, and three real skills: `skills/viz` (typed diagram router with a mechanical provenance gate), `skills/repro` (repro-first bugfix ledger), and `skills/vet` (evidence-gated diff review).
+- There is still no root app, root package manager, CI, or general test runner. `skills/viz/scripts/package.json` is a local helper manifest for the Mermaid validator, not a repo-wide build system; `skills/repro/scripts/repro_ledger.py` and `skills/vet/scripts/vet_gate.py` are dependency-free Python 3 stdlib (POSIX-only).
 - The git history contains a legacy `atools-js` codebase, but new work in this repo should not infer current architecture, tooling, or business rules from that legacy history unless the user explicitly asks for migration or reference work.
 
 ## Working Rules
@@ -40,4 +40,5 @@ Non-trivial work follows [`WORKFLOW.md`](WORKFLOW.md) — read it before acting 
 - For plugin packaging changes, run `claude plugin validate . --strict`; use `claude --bare --plugin-dir . plugin details techne` when you need to confirm skill discovery without opening an interactive Claude session.
 - For `skills/viz` script changes, run focused checks for the touched surface: `node skills/viz/scripts/validate-mermaid.mjs ...`, `python3 skills/viz/scripts/store_viz.py ...`, and `python3 skills/viz/scripts/build_viewer.py --project ...`; install or point `TECHNE_VIZ_NODE_MODULES` at `mermaid@11.15.0` + `jsdom` for validator checks.
 - For `skills/repro` script changes, run `python3 -m py_compile skills/repro/scripts/repro_ledger.py` and exercise the touched behavior against throwaway `/tmp` projects; the fixture table A–X in `skills/repro/eval.md` is the reference suite. The ledger must stay Python 3 stdlib and POSIX-only (macOS/Linux).
+- For `skills/vet` script changes, run `python3 -m py_compile skills/vet/scripts/vet_gate.py` and exercise the touched behavior against throwaway `/tmp` projects; the fixture table in `skills/vet/eval.md` is the reference suite. The gate must stay Python 3 stdlib and POSIX-only (macOS/Linux).
 - For code or executable assets, use the closest direct validation and state any empirical gap. Codex can mechanically validate scripts and packaging, but Claude/maintainer review judges skill faithfulness on real projects.

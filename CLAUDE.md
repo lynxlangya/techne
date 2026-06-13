@@ -18,12 +18,16 @@ contains:
   structures, with a mechanical provenance gate.
 - `skills/repro/`, the second real skill: a repro-first bugfix gate that forces
   fail → fix → same-probe verification through a run ledger.
+- `skills/vet/`, the third real skill: an evidence-gated diff review helper
+  that computes scope, blast radius, claims, findings, and verdict
+  admissibility.
 
 There is still **no root app, no root package manager, no CI, and no repo-wide
 test runner**. `skills/viz/scripts/package.json` only pins helper dependencies
-for that skill's Mermaid validator; `skills/repro/scripts/repro_ledger.py` is
-dependency-free Python 3 stdlib (POSIX-only). Do not infer commands, dependencies, or
-architecture from the legacy library; that direction was abandoned.
+for that skill's Mermaid validator; `skills/repro/scripts/repro_ledger.py` and
+`skills/vet/scripts/vet_gate.py` are dependency-free Python 3 stdlib
+(POSIX-only). Do not infer commands, dependencies, or architecture from the
+legacy library; that direction was abandoned.
 
 ## Project intent
 
@@ -38,7 +42,7 @@ install instructions that point back to that shared body.
 
 ## Current skill surface
 
-Two skills are seeded: `skills/viz` and `skills/repro`.
+Three skills are seeded: `skills/viz`, `skills/repro`, and `skills/vet`.
 
 `skills/viz` (coding/investigate):
 
@@ -78,8 +82,18 @@ Two skills are seeded: `skills/viz` and `skills/repro`.
   fail → later same-identity pass, or on a loud `mark-unreproduced`
   speculative path.
 
-Generated `.techne/` output (viz and repro alike) belongs in target projects
-and must not be committed to this repository.
+`skills/vet` (coding/review-diff):
+
+- `SKILL.md` forces review through a git-anchored scope, full hunk read,
+  blast-radius walk, claim cross-examination, severity-honest findings, and
+  verdict closure through `vet_gate.py`.
+- `scripts/vet_gate.py` (Python 3 stdlib, POSIX/macOS/Linux only) writes
+  `.techne/review/<slug>/scope.json`, consumes reviewer-authored
+  `review.json`, computes `report.json`, and closes `verdict.json`.
+  Classification and admissibility are computed, never self-reported.
+
+Generated `.techne/` output (viz, repro, and vet alike) belongs in target
+projects and must not be committed to this repository.
 
 ## Development workflow
 
@@ -116,6 +130,16 @@ projects — `skills/repro/eval.md` fixtures A–X are the reference suite:
 python3 -m py_compile skills/repro/scripts/repro_ledger.py
 python3 skills/repro/scripts/repro_ledger.py run --project /tmp/project --bug demo --expect "boom" -- python3 -c 'print("boom"); raise SystemExit(1)'
 python3 skills/repro/scripts/repro_ledger.py status --project /tmp/project --bug demo
+```
+
+For `vet` script changes, exercise the gate against throwaway `/tmp` projects —
+`skills/vet/eval.md` fixtures A–X, L1/L2, Y, Z, AA–AH, and house fixtures are
+the reference suite:
+
+```bash
+python3 -m py_compile skills/vet/scripts/vet_gate.py
+python3 skills/vet/scripts/vet_gate.py init --project /tmp/project --review demo --base <base> --head HEAD --claims-file /tmp/claims.txt
+python3 skills/vet/scripts/vet_gate.py check --project /tmp/project --review demo
 ```
 
 ## Legacy code

@@ -32,6 +32,10 @@ Current real skills:
   probe, and verify the fix with the same probe. See
   [repro/README.md](repro/README.md) for human-facing usage and
   [repro/README-CN.md](repro/README-CN.md) for Chinese usage.
+- `vet`: review a git-anchored diff through computed scope, accounted blast
+  radius, verified claims/findings, and admissible verdicts. See
+  [vet/README.md](vet/README.md) for human-facing usage and
+  [vet/README-CN.md](vet/README-CN.md) for Chinese usage.
 
 ## Skill Body
 

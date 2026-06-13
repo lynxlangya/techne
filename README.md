@@ -32,6 +32,10 @@ same skill bodies.
 - `repro` — force bug fixes through a failing reproduction first, then verify
   with the same probe after the fix. See
   [skills/repro/README.md](skills/repro/README.md) for detailed usage.
+- `vet` — force code review through computed scope, accounted blast radius,
+  verified claims/findings, and admissible verdicts before approving or
+  requesting changes. See [skills/vet/README.md](skills/vet/README.md) for
+  detailed usage.
 
 ## Install
 
