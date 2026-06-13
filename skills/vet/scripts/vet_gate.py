@@ -100,6 +100,19 @@ C_LIKE_EXTS = {
 CODE_EXTS = PY_EXTS | JS_EXTS | C_LIKE_EXTS
 BRACE_EXTS = JS_EXTS | C_LIKE_EXTS
 
+PY_MASK_TOKEN_TYPES = {tokenize.STRING, tokenize.COMMENT}
+for _token_name in (
+    "FSTRING_START",
+    "FSTRING_MIDDLE",
+    "FSTRING_END",
+    "TSTRING_START",
+    "TSTRING_MIDDLE",
+    "TSTRING_END",
+):
+    _token_type = getattr(tokenize, _token_name, None)
+    if isinstance(_token_type, int):
+        PY_MASK_TOKEN_TYPES.add(_token_type)
+
 CONTROL_WORDS = {
     "if",
     "for",
@@ -442,7 +455,7 @@ def mask_python(text: str) -> MaskResult:
     try:
         tokens = tokenize.generate_tokens(io.StringIO(text).readline)
         for tok in tokens:
-            if tok.type not in (tokenize.STRING, tokenize.COMMENT):
+            if tok.type not in PY_MASK_TOKEN_TYPES:
                 continue
             (start_line, start_col), (end_line, end_col) = tok.start, tok.end
             for line_no in range(start_line, end_line + 1):
@@ -614,14 +627,20 @@ def all_definitions(masked_lines: list[str], uncertain: set[int]) -> list[Defini
     return defs
 
 
-def python_unit_stack(defs: list[Definition], changed_line: int) -> list[Definition]:
+def python_unit_stack(defs: list[Definition], changed_line: int, changed_indent: int) -> list[Definition]:
     stack: list[Definition] = []
     last_indent = 10**9
     for definition in sorted((item for item in defs if item.line <= changed_line), key=lambda item: item.line, reverse=True):
-        if definition.indent < last_indent:
+        if definition.indent < changed_indent and definition.indent < last_indent:
             stack.append(definition)
             last_indent = definition.indent
     return list(reversed(stack))
+
+
+def line_indent(masked_lines: list[str], line_no: int) -> int:
+    if line_no < 1 or line_no > len(masked_lines):
+        return 0
+    return leading_indent(masked_lines[line_no - 1])
 
 
 def has_open_after_def(line: str, definition: Definition) -> bool:
@@ -658,6 +677,9 @@ def brace_unit_stack(masked_lines: list[str], changed_line: int, uncertain: set[
         if stripped.startswith("{") and pending:
             for definition in pending:
                 active.append((definition, depth + 1))
+            pending = []
+        elif stripped and pending:
+            notes.append(f"pending_definition_cleared:{line_no}")
             pending = []
         defs = [] if line_no in uncertain else detect_definitions(line, line_no)
         for definition in defs:
@@ -722,44 +744,81 @@ def make_symbol(definition: Definition, file_path: str, source: str, hunk_id: st
     }
 
 
-def parse_diff_hunks(diff_text: str) -> tuple[dict[str, list[dict[str, Any]]], dict[str, list[int]], dict[str, list[str]], dict[str, bool]]:
+def parse_git_diff_paths(raw: str) -> tuple[str | None, str | None]:
+    match = re.match(r"^diff --git a/(.+) b/(.+)$", raw)
+    if not match:
+        return None, None
+    return match.group(1), match.group(2)
+
+
+def parse_diff_hunks(
+    diff_text: str,
+) -> tuple[dict[str, list[dict[str, Any]]], dict[str, list[int]], dict[str, list[str]], dict[str, list[int]], dict[str, bool]]:
     hunks: dict[str, list[dict[str, Any]]] = {}
     changed_lines: dict[str, list[int]] = {}
     added_text: dict[str, list[str]] = {}
+    removed_lines: dict[str, list[int]] = {}
     binary: dict[str, bool] = {}
     current: str | None = None
+    old_path: str | None = None
+    new_path: str | None = None
     hunk: dict[str, Any] | None = None
+    old_line = 0
     new_line = 0
     hunk_re = re.compile(r"^@@ -(\d+)(?:,(\d+))? \+(\d+)(?:,(\d+))? @@ ?(.*)$")
     for raw in diff_text.splitlines():
         if raw.startswith("diff --git "):
+            old_path, new_path = parse_git_diff_paths(raw)
             current = None
             hunk = None
+        elif raw.startswith("--- "):
+            if raw.startswith("--- a/"):
+                old_path = raw[6:]
+            elif raw == "--- /dev/null":
+                old_path = None
         elif raw.startswith("+++ b/"):
-            current = raw[6:]
+            new_path = raw[6:]
+            current = new_path
             hunks.setdefault(current, [])
             changed_lines.setdefault(current, [])
             added_text.setdefault(current, [])
+        elif raw == "+++ /dev/null":
+            new_path = None
+            current = old_path
+            if current:
+                hunks.setdefault(current, [])
+                changed_lines.setdefault(current, [])
+                added_text.setdefault(current, [])
         elif raw.startswith("Binary files "):
             parts = raw.split(" and ")
+            if parts and parts[0].startswith("Binary files a/"):
+                binary[parts[0][15:]] = True
             if len(parts) > 1 and parts[1].startswith("b/"):
                 binary[parts[1][2:].split(" differ")[0]] = True
         elif current and raw.startswith("@@ "):
             match = hunk_re.match(raw)
             if not match:
                 continue
+            old_start = int(match.group(1))
+            old_count = int(match.group(2) or "1")
             new_start = int(match.group(3))
             new_count = int(match.group(4) or "1")
             hunk_id = f"h{sum(len(items) for items in hunks.values()) + 1}"
             hunk = {
                 "id": hunk_id,
                 "file": current,
+                "oldFile": old_path,
+                "newFile": new_path,
+                "oldStart": old_start,
+                "oldCount": old_count,
+                "oldLines": list(range(old_start, old_start + old_count)) if old_count else [],
                 "newStart": new_start,
                 "newCount": new_count,
                 "newLines": list(range(new_start, new_start + new_count)) if new_count else [],
                 "headerHint": match.group(5).strip(),
             }
             hunks[current].append(hunk)
+            old_line = old_start
             new_line = new_start
         elif current and hunk is not None:
             if raw.startswith("+") and not raw.startswith("+++"):
@@ -767,10 +826,13 @@ def parse_diff_hunks(diff_text: str) -> tuple[dict[str, list[dict[str, Any]]], d
                 added_text[current].append(raw[1:])
                 new_line += 1
             elif raw.startswith("-") and not raw.startswith("---"):
-                pass
+                if old_path:
+                    removed_lines.setdefault(old_path, []).append(old_line)
+                old_line += 1
             elif raw.startswith(" "):
+                old_line += 1
                 new_line += 1
-    return hunks, changed_lines, added_text, binary
+    return hunks, changed_lines, added_text, removed_lines, binary
 
 
 def classify_file(path: str, is_binary: bool) -> str:
@@ -797,7 +859,20 @@ def changed_files(project: Path, merge_base_sha: str, head_sha: str) -> list[dic
         parts = line.split("\t")
         status = parts[0]
         path = parts[-1]
-        files.append({"path": path, "status": status})
+        record = {"path": path, "status": status}
+        if status.startswith(("R", "C")) and len(parts) >= 3:
+            record["oldPath"] = parts[1]
+            record["newPath"] = parts[2]
+        elif status == "D":
+            record["oldPath"] = path
+            record["newPath"] = None
+        elif status == "A":
+            record["oldPath"] = None
+            record["newPath"] = path
+        else:
+            record["oldPath"] = path
+            record["newPath"] = path
+        files.append(record)
     return files
 
 
@@ -813,7 +888,7 @@ def compute_scope(project: Path, review: str, base_ref: str, head_ref: str, allo
         fail("dirty_worktree", "Worktree has changes outside .techne/. Pass --allow-dirty to record the escape.", {"dirty": dirty})
     merge_base_sha = merge_base(project, base_sha, head_sha)
     diff_text = git_stdout(project, ["diff", "--unified=0", "--find-renames", "--no-ext-diff", "--no-color", merge_base_sha, head_sha])
-    hunks_by_file, changed_head_lines, added_lines, binary_map = parse_diff_hunks(diff_text)
+    hunks_by_file, changed_head_lines, added_lines, removed_base_lines, binary_map = parse_diff_hunks(diff_text)
     files = changed_files(project, merge_base_sha, head_sha)
     commit_messages, commit_trailers, commit_claim_items = commit_claims(project, merge_base_sha, head_sha)
     claim_map = {item["id"]: item for item in claims}
@@ -834,6 +909,7 @@ def compute_scope(project: Path, review: str, base_ref: str, head_ref: str, allo
 
     for item in files:
         path = item["path"]
+        old_path = item.get("oldPath") or path
         classification = classify_file(path, binary_map.get(path, False))
         if classification == "reviewableText":
             if is_test_path(path):
@@ -843,6 +919,9 @@ def compute_scope(project: Path, review: str, base_ref: str, head_ref: str, allo
         text = git_show_text(project, head_sha, path) if classification == "reviewableText" else None
         mask = lexical_mask(path, text or "") if text is not None else None
         defs = all_definitions(mask.lines, mask.uncertain_lines) if mask else []
+        base_text = git_show_text(project, merge_base_sha, old_path) if classification == "reviewableText" and old_path else None
+        base_mask = lexical_mask(old_path, base_text or "") if base_text is not None else None
+        base_defs = all_definitions(base_mask.lines, base_mask.uncertain_lines) if base_mask else []
         file_hunks = hunks_by_file.get(path, [])
         for hunk in file_hunks:
             hunk = dict(hunk)
@@ -854,12 +933,23 @@ def compute_scope(project: Path, review: str, base_ref: str, head_ref: str, allo
             hunk["maskNotes"] = mask.notes if mask else []
             first_line = hunk["newLines"][0] if hunk["newLines"] else hunk["newStart"]
             affected = set(hunk["newLines"] or [first_line])
+            removed_affected = set(hunk.get("oldLines") or [])
+            removed_candidate = False
+            if classification == "reviewableText" and base_mask:
+                for definition in base_defs:
+                    if definition.line in removed_affected and definition.line not in base_mask.uncertain_lines:
+                        symbol = make_symbol(definition, hunk.get("oldFile") or old_path, "removed-definition", hunk["id"], "removed-line")
+                        symbol["tree"] = "base"
+                        stored = add_candidate_symbol(candidate_symbols, symbol)
+                        if stored["id"] not in hunk["unitCandidates"]:
+                            hunk["unitCandidates"].append(stored["id"])
+                        removed_candidate = True
             if classification == "reviewableText" and mask:
                 if mask.confidence != "confident" and (mask.family == "unknown" or affected & mask.uncertain_lines):
                     hunk["unitBinding"] = "weak"
                     hunk["requiresDisposition"] = True
                 elif Path(path).suffix in PY_EXTS:
-                    stack = python_unit_stack(defs, first_line)
+                    stack = python_unit_stack(defs, first_line, line_indent(mask.lines, first_line))
                     for index, definition in enumerate(stack):
                         relation = "outer" if index < len(stack) - 1 else "nearest"
                         symbol = make_symbol(definition, path, "enclosing-unit", hunk["id"], relation)
@@ -892,6 +982,15 @@ def compute_scope(project: Path, review: str, base_ref: str, head_ref: str, allo
                             hunk["unitCandidates"].append(stored["id"])
                         hunk["unitBinding"] = "strong"
                         hunk["requiresDisposition"] = False
+                if removed_candidate and hunk["unitBinding"] == "none":
+                    hunk["unitBinding"] = "removed"
+                    hunk["requiresDisposition"] = False
+            elif classification == "reviewableText" and removed_candidate:
+                hunk["unitBinding"] = "removed"
+                hunk["requiresDisposition"] = False
+            elif classification == "reviewableText":
+                hunk["unitBinding"] = "weak"
+                hunk["requiresDisposition"] = True
             all_hunks.append(hunk)
         changed_file_records.append(
             {
@@ -928,6 +1027,7 @@ def compute_scope(project: Path, review: str, base_ref: str, head_ref: str, allo
         "candidateSymbols": sorted(candidate_symbols.values(), key=lambda item: (item.get("definingFile") or "", item.get("definingLine") or 0, item["name"])),
         "changedHeadLines": {path: sorted(set(lines)) for path, lines in changed_head_lines.items()},
         "addedLines": added_lines,
+        "removedBaseLines": {path: sorted(set(lines)) for path, lines in removed_base_lines.items()},
         "testsDelta": {"prodChanged": prod_changed, "testsChanged": tests_changed},
         "heuristics": {
             "testPathPattern": TEST_PATH_RE.pattern,
@@ -1131,10 +1231,11 @@ def subtract_own_ranges(refs: list[dict[str, Any]], scope: dict[str, Any], symbo
     result: list[dict[str, Any]] = []
     defining_file = symbol.get("definingFile")
     defining_line = symbol.get("definingLine")
+    subtract_definition_line = symbol.get("source") != "removed-definition" and symbol.get("tree") != "base"
     for ref in refs:
         if line_in_diff(scope, ref["file"], ref["line"]):
             continue
-        if defining_file == ref["file"] and defining_line == ref["line"]:
+        if subtract_definition_line and defining_file == ref["file"] and defining_line == ref["line"]:
             continue
         result.append(ref)
     return result
@@ -1529,7 +1630,7 @@ def compute_report(project: Path, review: str, *, enforce_head: bool = True) -> 
     has_change_finding = any(item.get("severity") in {"blocking", "concern"} for item in findings_report)
     has_blocking_r2 = any(item.get("severity") == "blocking" and item.get("rung") in {"R2", "R3"} for item in findings_report)
     concern_only = has_change_finding and not any(item.get("severity") == "blocking" for item in findings_report)
-    early_stop_allowed = has_blocking_r2 and not refs_complete
+    early_stop_allowed = has_blocking_r2 and not (refs_complete and hunks_complete)
     admissible: list[str] = ["blocked"]
     refusal_reasons: dict[str, list[str]] = {"approve": [], "request-changes": []}
     if blocking_open:
@@ -1550,7 +1651,7 @@ def compute_report(project: Path, review: str, *, enforce_head: bool = True) -> 
         refusal_reasons["request-changes"].append("bounded_plan_uncovered_raw_path")
     if not refs_complete and not early_stop_allowed and not bounded_plan_uncovered:
         refusal_reasons["request-changes"].append("refs_unaccounted")
-    if concern_only and not refs_complete:
+    if concern_only and not refs_complete and "refs_unaccounted" not in refusal_reasons["request-changes"]:
         refusal_reasons["request-changes"].append("refs_unaccounted")
     if not hunks_complete and not early_stop_allowed:
         refusal_reasons["request-changes"].append("hunks_unaccounted")

@@ -9,6 +9,9 @@ real Claude review context before the issue is closed.
 - 2026-06-12 — Mechanical fixtures A-X, L1/L2, Y, Z, AA-AH, and house fixtures:
   **passed in the implementation PR self-check** against throwaway `/tmp`
   projects (`49/49 passed`).
+- 2026-06-13 — PR #26 step-4 follow-up added fixtures AI-AJ for removed-side
+  symbols, Python f-string masking, and early-stop symmetry; the full fixture
+  suite passed against throwaway `/tmp` projects (`56/56 passed`).
 - 2026-06-12 — Empirical acceptance: **not yet run**. This issue must remain
   open until results are recorded here and in an issue comment for #25.
 
@@ -54,6 +57,8 @@ must not be committed.
 | AF | nested function body edit | inner and outer units enter floor; accounting inner alone cannot approve |
 | AG | commit body/trailer claims | body paragraph and non-allowlisted trailers anchor as claims; identity trailers exempt |
 | AH | brace stack same-indent and Allman wrappers | outer and inner enter floor; accounting inner alone cannot approve |
+| AI | removed-side definitions from deleted functions, renames, and whole-file deletions | old-name symbols enter the floor as `removed-definition`; stale head refs must be accounted; deletion hunks survive `+++ /dev/null` |
+| AJ | early-stop symmetry for refs and hunks | blocking R2/R3 permits `request-changes` with incomplete refs or hunks and records `blastRadiusComplete: false`; dropping an examined ref must not flip the verdict outcome |
 
 House fixtures:
 

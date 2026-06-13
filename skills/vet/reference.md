@@ -132,7 +132,8 @@ literals cannot create a unit or refuse an `enclosingUnit`.
 
 Masking support in v1:
 
-- Python `.py`: stdlib `tokenize`.
+- Python `.py`: stdlib `tokenize`, including f-string and t-string token
+  families when the host Python exposes them.
 - JS/TS `.js`, `.jsx`, `.ts`, `.tsx`, `.mjs`, `.cjs`: `//`, `/* */`,
   single/double strings, and template literals. Template interpolation marks the
   affected lines weak.
@@ -151,6 +152,9 @@ single top-to-changed-line brace-depth scan:
 - Prototypes and forward declarations ending in `;` before any `{` are ignored.
 - One-line `definition { body }` forms are active for a change on that line, and
   then pop when the closing brace is passed.
+- Removed-side definitions from deleted lines enter `candidateSymbols` with
+  source `removed-definition`; their refs are searched in the reviewed head so
+  stale callers/imports remain accountable after deletions or renames.
 
 This resolves the round-5 brace association question for v1. If the scanner is
 not confident, the hunk is `unitBinding: weak` and approval needs an explicit
@@ -188,9 +192,9 @@ No patterns are allowed. `Caused-by` does not ride a `*-by` rule. `Fixes`,
 `Security`, `Regression`, `Performance`, `Tests`, `Deploy-note`, and project
 custom trailers are anchored as claims.
 
-I keep all nine keys for v1: each is identity/attribution metadata rather than
-a behavior claim. No extra key is added because project-custom trailers are the
-dangerous self-selection surface this gate is closing.
+All nine keys remain in v1 because each is identity/attribution metadata rather
+than a behavior claim. No extra key is added because project-custom trailers are
+the dangerous self-selection surface this gate is closing.
 
 ## Exclusions
 
@@ -218,4 +222,6 @@ keeps raw-vs-bounded visibility.
 - A bounded plan can still miss call sites inside a scanned file if the pattern
   is badly chosen; this is a Goodhart-watch item.
 - Unit detection is heuristic and textual, not AST/LSP-backed.
+- Rust lifetime syntax can still make the light scanner fail closed to weak on
+  ordinary code; v1 accepts the friction rather than risking false bindings.
 - Windows is out of v1 scope; the script is POSIX-only.

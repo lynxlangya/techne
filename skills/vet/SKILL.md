@@ -1,6 +1,6 @@
 ---
 name: vet
-description: Evidence-gated diff review for PRs, branches, commit ranges, staged code changes, and merge readiness checks. Use when Codex must review a concrete git-anchored diff, judge whether code is safe to merge, inspect a PR URL or branch, cross-examine PR or commit claims, account blast radius, or render approve/request-changes/blocked verdicts. Do not use for design-only review, whole-codebase audits, bug fixing, or code authoring without a git diff under judgment.
+description: Evidence-gated diff review for PRs, branches, commit ranges, staged code changes, and merge readiness checks. Use when an AI reviewer must review a concrete git-anchored diff, judge whether code is safe to merge, inspect a PR URL or branch, cross-examine PR or commit claims, account blast radius, or render approve/request-changes/blocked verdicts. Do not use for design-only review, whole-codebase audits, bug fixing, or code authoring without a git diff under judgment.
 ---
 
 # vet
