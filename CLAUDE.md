@@ -21,13 +21,16 @@ contains:
 - `skills/vet/`, the third real skill: an evidence-gated diff review helper
   that computes scope, blast radius, claims, findings, and verdict
   admissibility.
+- `skills/intake/`, the fourth real skill: a written engineering brief
+  interrogation gate that accounts a fixed rubric before work starts.
 
 There is still **no root app, no root package manager, no CI, and no repo-wide
 test runner**. `skills/viz/scripts/package.json` only pins helper dependencies
 for that skill's Mermaid validator; `skills/repro/scripts/repro_ledger.py` and
-`skills/vet/scripts/vet_gate.py` are dependency-free Python 3 stdlib
-(POSIX-only). Do not infer commands, dependencies, or architecture from the
-legacy library; that direction was abandoned.
+`skills/vet/scripts/vet_gate.py` and `skills/intake/scripts/intake_gate.py` are
+dependency-free Python 3 stdlib (POSIX-only). Do not infer commands,
+dependencies, or architecture from the legacy library; that direction was
+abandoned.
 
 ## Project intent
 
@@ -42,7 +45,8 @@ install instructions that point back to that shared body.
 
 ## Current skill surface
 
-Three skills are seeded: `skills/viz`, `skills/repro`, and `skills/vet`.
+Four skills are seeded: `skills/viz`, `skills/repro`, `skills/vet`, and
+`skills/intake`.
 
 `skills/viz` (coding/investigate):
 
@@ -92,8 +96,20 @@ Three skills are seeded: `skills/viz`, `skills/repro`, and `skills/vet`.
   `review.json`, computes `report.json`, and closes `verdict.json`.
   Classification and admissibility are computed, never self-reported.
 
-Generated `.techne/` output (viz, repro, and vet alike) belongs in target
-projects and must not be committed to this repository.
+`skills/intake` (general/interrogate):
+
+- `SKILL.md` forces pre-work interrogation of a written engineering
+  implementation brief: account the fixed ten-element rubric, cite present/weak
+  claims against the brief, surface gaps, solution-as-goal traps,
+  contradictions, and questions, then emit an intent-level plan.
+- `scripts/intake_gate.py` (Python 3 stdlib, POSIX/macOS/Linux only) writes
+  `.techne/plan/<slug>/brief.txt` and `context.json`, consumes
+  reviewer-authored `intake.json`, computes `report.json`, and emits
+  `plan.json` plus `intakeReport.json`. Classification and admissibility are
+  computed, never self-reported.
+
+Generated `.techne/` output (viz, repro, vet, and intake alike) belongs in
+target projects and must not be committed to this repository.
 
 ## Development workflow
 
@@ -140,6 +156,16 @@ the reference suite:
 python3 -m py_compile skills/vet/scripts/vet_gate.py
 python3 skills/vet/scripts/vet_gate.py init --project /tmp/project --review demo --base <base> --head HEAD --claims-file /tmp/claims.txt
 python3 skills/vet/scripts/vet_gate.py check --project /tmp/project --review demo
+```
+
+For `intake` script changes, exercise the gate against throwaway `/tmp` briefs —
+`skills/intake/eval.md` fixtures A–L, floor fixtures, and house fixtures are the
+reference suite:
+
+```bash
+python3 -m py_compile skills/intake/scripts/intake_gate.py
+python3 skills/intake/scripts/intake_gate.py init --project /tmp/project --plan demo --brief-file /tmp/brief.txt
+python3 skills/intake/scripts/intake_gate.py check --project /tmp/project --plan demo
 ```
 
 ## Legacy code

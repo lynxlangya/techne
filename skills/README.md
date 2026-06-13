@@ -36,6 +36,11 @@ Current real skills:
   radius, verified claims/findings, and admissible verdicts. See
   [vet/README.md](vet/README.md) for human-facing usage and
   [vet/README-CN.md](vet/README-CN.md) for Chinese usage.
+- `intake`: interrogate a written engineering implementation brief before work
+  starts, accounting the fixed rubric and surfacing gaps, traps, contradictions,
+  and questions before emitting an intent-level plan. See
+  [intake/README.md](intake/README.md) for human-facing usage and
+  [intake/README-CN.md](intake/README-CN.md) for Chinese usage.
 
 ## Skill Body
 
