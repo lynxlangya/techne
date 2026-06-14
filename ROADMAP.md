@@ -99,6 +99,29 @@ briefs through a fixed rubric before work starts, surfacing gaps,
 solution-as-goal traps, contradictions, and dependent questions before emitting
 an intent-level plan.
 
+## Validation Status
+
+Per [`WORKFLOW.md`](WORKFLOW.md), a skill clears two gates: **step 4** mechanical
+review and **step 5** empirical acceptance — baseline vs. with-skill, judged
+jointly, on the principle `changing ≠ improving`. All four seeded skills merged
+**ahead of step 5**; the empirical proof is **owed** and is run **manually by the
+maintainer in real projects**. This table is the durable tracker: issue-based
+tracking has eroded — two tracking issues were closed with the debt still
+carried — so trust this ledger, not issue state.
+
+| Skill | Step 4 — mechanical | Step 5 — empirical | Tracking issue | Methodology |
+| --- | --- | --- | --- | --- |
+| `viz` | passed (merged) | **not recorded — owed** | #11 closed (build PR; no dedicated empirical issue) | [`skills/viz/eval.md`](skills/viz/eval.md) |
+| `repro` | passed (24/24 + review probes) | **not run — owed** | #22 closed 2026-06-10 (debt carried) | [`skills/repro/eval.md`](skills/repro/eval.md) |
+| `vet` | passed (56/56) | **not run — owed** | #25 closed 2026-06-13 (debt carried) | [`skills/vet/eval.md`](skills/vet/eval.md) |
+| `intake` | passed (21/21 + review probes) | **not run — owed** | #28 open | [`skills/intake/eval.md`](skills/intake/eval.md) |
+
+Discharging a skill's step-5 debt: run its `eval.md` empirical protocol (baseline
+vs. with-skill over seeded real-project material against a maintainer answer key),
+record the result in that `eval.md` Acceptance Status, and update the row above.
+Closing a tracking issue does **not** discharge the debt; only a recorded result
+does.
+
 ## Packaging Status
 
 techne now ships one shared `skills/` body through multiple thin paths:

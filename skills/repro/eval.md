@@ -10,9 +10,11 @@ real Claude context before merge.
   #23's self-check and re-verified in the Claude review (24/24, plus fresh-eyes
   probes and a realistic end-to-end fail → fix → verify cycle).
 - 2026-06-10 — Empirical acceptance (3 seeded historical bugs, baseline vs
-  skill, controls C1–C3): **not yet run**. PR #23 merged ahead of this gate;
-  the results are owed and will be recorded here and on issue #22 when the
-  protocol runs. Until then, `repro` has not cleared its own empirical bar.
+  skill, controls C1–C3): **not yet run**, owed. PR #23 merged ahead of this
+  gate. Tracking issue #22 was closed (2026-06-10) with this debt still carried,
+  so the durable tracker is `ROADMAP.md` Validation Status; the result will be
+  recorded here on manual verification. Until then, `repro` has not cleared its
+  own empirical bar.
 
 ## Mechanical Fixtures
 
