@@ -9,8 +9,10 @@ tests the skill in a real Claude context before issue #28 is closed.
 - 2026-06-13 — Mechanical fixtures A-L, floor fixtures, and house fixtures:
   **passed in the implementation PR self-check** against throwaway `/tmp`
   projects (`21/21 passed`).
-- 2026-06-13 — Empirical acceptance: **not yet run**. This issue must remain
-  open until results are recorded here and in an issue comment for #28.
+- 2026-06-13 — Empirical acceptance: **not yet run**, owed. Tracking issue #28
+  remains open; the result will be recorded here and in an issue comment for #28.
+  Durable cross-skill tracker: `ROADMAP.md` Validation Status. Verification is
+  run manually by the maintainer in real projects.
 
 ## Mechanical Fixtures
 

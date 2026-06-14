@@ -4,6 +4,18 @@ This is the empirical acceptance methodology. Codex only runs mechanical checks;
 Claude and the maintainer run the skill-level evaluation in an authenticated
 Claude context.
 
+## Acceptance Status
+
+- `viz` shipped through the build work tracked in #11 (closed 2026-06-08). Its
+  mechanical provenance methodology is in "Mechanical Provenance Fixtures" below.
+- 2026-06-14 — Empirical acceptance (baseline vs. with-`viz`, per the Test Set,
+  Metrics, and Pass Bar below): **no result is recorded**. Like `repro`, `vet`,
+  and `intake`, `viz` merged ahead of a recorded step-5 result, and it has no
+  dedicated open tracking issue. Until a run is recorded here, `viz` has not
+  demonstrably cleared its empirical bar. Verification is owed and is run
+  manually by the maintainer in real projects. Durable cross-skill tracker:
+  `ROADMAP.md` Validation Status.
+
 ## Test Set
 
 Use maintainer-private local repos or bounded areas that cover the supported

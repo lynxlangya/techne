@@ -1,7 +1,7 @@
 ```yaml
 version: v0.1
 project: techne
-updated: 2026-06-09
+updated: 2026-06-14
 ```
 
 # Workflow
@@ -79,6 +79,10 @@ your side, and never closes end-to-end on codex.
 otherwise skip the move, forcing it *improves* the outcome. Judge jointly. Finance
 has delayed ground truth, so backtest against history; elsewhere, blind
 baseline-vs-skill.
+
+Per-skill validation status lives in [`ROADMAP.md`](ROADMAP.md) Validation Status
+— the durable tracker. Issue state is **not** authoritative for empirical debt: a
+closed tracking issue does not mean the step-5 gate was cleared.
 
 ## How this doc earns its place
 

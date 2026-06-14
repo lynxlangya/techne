@@ -12,8 +12,10 @@ real Claude review context before the issue is closed.
 - 2026-06-13 — PR #26 step-4 follow-up added fixtures AI-AJ for removed-side
   symbols, Python f-string masking, and early-stop symmetry; the full fixture
   suite passed against throwaway `/tmp` projects (`56/56 passed`).
-- 2026-06-12 — Empirical acceptance: **not yet run**. This issue must remain
-  open until results are recorded here and in an issue comment for #25.
+- 2026-06-12 — Empirical acceptance: **not yet run**, owed. Tracking issue #25
+  was closed (2026-06-13) with this debt still carried; the durable tracker is
+  `ROADMAP.md` Validation Status, and the result will be recorded here on manual
+  verification.
 
 ## Mechanical Fixtures
 
