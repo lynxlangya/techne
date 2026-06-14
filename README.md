@@ -36,6 +36,10 @@ same skill bodies.
   verified claims/findings, and admissible verdicts before approving or
   requesting changes. See [skills/vet/README.md](skills/vet/README.md) for
   detailed usage.
+- `intake` — interrogate a written engineering implementation brief before work
+  starts, accounting the fixed rubric, surfacing gaps/traps/questions, and
+  emitting an intent-level plan. See
+  [skills/intake/README.md](skills/intake/README.md) for detailed usage.
 
 ## Install
 

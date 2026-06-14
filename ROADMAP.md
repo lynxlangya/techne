@@ -93,6 +93,12 @@ fail -> fix -> same-probe verification ledger.
 lives under `skills/vet/` and forces diff review through computed scope,
 accounted blast radius, verified claims/findings, and admissible verdicts.
 
+`intake` is the fourth real seeded skill and the `general/interrogate` seed. It
+lives under `skills/intake/` and forces written engineering implementation
+briefs through a fixed rubric before work starts, surfacing gaps,
+solution-as-goal traps, contradictions, and dependent questions before emitting
+an intent-level plan.
+
 ## Packaging Status
 
 techne now ships one shared `skills/` body through multiple thin paths:
