@@ -4,6 +4,8 @@
 
 技艺。古希腊语 `τέχνη`，是 `technique` / `technology` 的共同词根，指「知道怎么做」的实践之知。读作「忒克涅 / TEK-nee」。
 
+官网：[techne.wangyun.fan](https://techne.wangyun.fan)。
+
 英文版：[README.md](README.md)。
 
 ## 这是什么
