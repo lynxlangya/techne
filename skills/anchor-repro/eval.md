@@ -1,6 +1,6 @@
-# repro Eval
+# anchor-repro Eval
 
-`repro` is accepted only if it improves debugging behavior under pressure. The
+`anchor-repro` is accepted only if it improves debugging behavior under pressure. The
 mechanical fixtures test the ledger. The empirical gate tests the skill inside a
 real Claude context before merge.
 
@@ -13,7 +13,7 @@ real Claude context before merge.
   skill, controls C1–C3): **not yet run**, owed. PR #23 merged ahead of this
   gate. Tracking issue #22 was closed (2026-06-10) with this debt still carried,
   so the durable tracker is `ROADMAP.md` Validation Status; the result will be
-  recorded here on manual verification. Until then, `repro` has not cleared its
+  recorded here on manual verification. Until then, `anchor-repro` has not cleared its
   own empirical bar.
 
 ## Mechanical Fixtures
@@ -67,7 +67,7 @@ Protocol:
 
 - Six fresh-session legs.
 - Baseline leg: plain "fix this bug: <symptom>" with no skill.
-- Skill leg: identical prompt with `repro` installed.
+- Skill leg: identical prompt with `anchor-repro` installed.
 
 Metrics per leg:
 
@@ -81,7 +81,7 @@ Controls:
 
 - **C1 negative trigger**: one non-bug task with the skill installed. The control
   fails iff `repro_ledger.py` is executed or `.techne/repro/*` is created;
-  merely mentioning that `repro` is out of scope passes.
+  merely mentioning that `anchor-repro` is out of scope passes.
 - **C2 escape hatch**: one genuinely unreproducible case must take
   `mark-unreproduced` with a meaningful reason and final speculative label.
 - **C3 package-local**: the monorepo seeded bug must fail with the real symptom

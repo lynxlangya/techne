@@ -27,21 +27,25 @@ same skill bodies.
 
 ## Skills
 
-- `viz` — investigate a real codebase by diagramming it. It routes one user
+The current seeded skills use the `anchor-*` prefix because each one anchors AI
+work to evidence it cannot self-report or fake: a source tree, run ledger, git
+diff, or written brief.
+
+- `anchor-viz` — investigate a real codebase by diagramming it. It routes one user
   request across architecture, interaction, data-model, state-model, and
   type-structure diagrams, then validates and builds a local viewer. See
-  [skills/viz/README.md](skills/viz/README.md) for detailed usage.
-- `repro` — force bug fixes through a failing reproduction first, then verify
+  [skills/anchor-viz/README.md](skills/anchor-viz/README.md) for detailed usage.
+- `anchor-repro` — force bug fixes through a failing reproduction first, then verify
   with the same probe after the fix. See
-  [skills/repro/README.md](skills/repro/README.md) for detailed usage.
-- `vet` — force code review through computed scope, accounted blast radius,
+  [skills/anchor-repro/README.md](skills/anchor-repro/README.md) for detailed usage.
+- `anchor-vet` — force code review through computed scope, accounted blast radius,
   verified claims/findings, and admissible verdicts before approving or
-  requesting changes. See [skills/vet/README.md](skills/vet/README.md) for
+  requesting changes. See [skills/anchor-vet/README.md](skills/anchor-vet/README.md) for
   detailed usage.
-- `intake` — interrogate a written engineering implementation brief before work
+- `anchor-intake` — interrogate a written engineering implementation brief before work
   starts, accounting the fixed rubric, surfacing gaps/traps/questions, and
   emitting an intent-level plan. See
-  [skills/intake/README.md](skills/intake/README.md) for detailed usage.
+  [skills/anchor-intake/README.md](skills/anchor-intake/README.md) for detailed usage.
 
 ## Install
 
@@ -83,4 +87,4 @@ Public-facing documentation is split by language:
 - `README-CN.md` is the Chinese companion document.
 
 The same convention applies to skill usage guides when a Chinese version is
-needed, for example `skills/viz/README.md` and `skills/viz/README-CN.md`.
+needed, for example `skills/anchor-viz/README.md` and `skills/anchor-viz/README-CN.md`.

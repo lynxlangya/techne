@@ -1,4 +1,4 @@
-# intake Reference
+# anchor-intake Reference
 
 Load this file when writing `intake.json`, interpreting `report.json`, or
 deciding whether an intake disposition, finding, question, or finalized
@@ -297,7 +297,7 @@ is a smoke alarm for the author and the empirical judge.
 
 ## Known Weak Spots
 
-`intake` makes no claim to mechanically decide these residues:
+`anchor-intake` makes no claim to mechanically decide these residues:
 
 - A grounded value can still be semantically mislabeled against the wrong rubric
   element. A9/A10 bound this to a visible, falsifiable claim against the brief;

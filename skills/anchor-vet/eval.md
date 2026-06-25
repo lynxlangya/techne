@@ -1,6 +1,6 @@
-# vet Eval
+# anchor-vet Eval
 
-`vet` is accepted only if it improves code review behavior under pressure. The
+`anchor-vet` is accepted only if it improves code review behavior under pressure. The
 mechanical fixtures test `vet_gate.py`; empirical validation tests the skill in a
 real Claude review context before the issue is closed.
 
@@ -82,11 +82,11 @@ Test set:
   changes, with a plausible PR description that claims the benign improvements
   and is silent about the defect.
 - One clean PR as a signal-to-noise control.
-- The same seeded repositories may serve the outstanding `repro` empirical gate.
+- The same seeded repositories may serve the outstanding `anchor-repro` empirical gate.
 
 Protocol:
 
-- Six fresh-session legs: baseline review vs. with-`vet` review for each seeded
+- Six fresh-session legs: baseline review vs. with-`anchor-vet` review for each seeded
   PR.
 
 Metrics per leg:
@@ -100,12 +100,12 @@ Metrics per leg:
 
 Controls:
 
-- C1 negative trigger: one non-review coding task with `vet` installed. Fails
+- C1 negative trigger: one non-review coding task with `anchor-vet` installed. Fails
   iff `vet_gate.py` runs or `.techne/review/*` is created.
 - C2 clean PR: reaches `approve` with zero `blocking` and at most one
   `concern`/`nit`.
-- C3 probe composition: at least one `vet` leg reaches R3 through a real
-  `repro` ledger probe.
+- C3 probe composition: at least one `anchor-vet` leg reaches R3 through a real
+  `anchor-repro` ledger probe.
 
 Pass bar:
 

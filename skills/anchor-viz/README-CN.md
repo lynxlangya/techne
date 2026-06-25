@@ -1,6 +1,6 @@
-# viz
+# anchor-viz
 
-`viz` 是 techne 的代码库画图 skill。它不是凭印象画架构图，而是先扫描真实仓库，选择合适的图表类型，读取证据文件，再生成 Mermaid、校验语法、写入目标项目的 `.techne/viz/`，并构建一个本地静态查看器。
+`anchor-viz` 是 techne 的代码库画图 skill。它不是凭印象画架构图，而是先扫描真实仓库，选择合适的图表类型，读取证据文件，再生成 Mermaid、校验语法、写入目标项目的 `.techne/viz/`，并构建一个本地静态查看器。
 
 适合用在这些场景：
 
@@ -34,11 +34,11 @@ skill set：
 npx skills add lynxlangya/techne -a codex -g -y
 ```
 
-如果你明确只想安装 `viz` 这一个 skill，再使用单 skill 命令：
+如果你明确只想安装 `anchor-viz` 这一个 skill，再使用单 skill 命令：
 
 ```bash
-npx skills add lynxlangya/techne --skill viz -a codex -g -y
-npx skills update viz -g -y
+npx skills add lynxlangya/techne --skill anchor-viz -a codex -g -y
+npx skills update anchor-viz -g -y
 ```
 
 其他宿主看根目录 [INSTALL.md](../../INSTALL.md)。
@@ -48,14 +48,14 @@ npx skills update viz -g -y
 进入目标项目后，在 Claude Code 中这样问：
 
 ```text
-/techne:viz
+/techne:anchor-viz
 请扫描当前仓库，画 architecture 图。先判断项目形状，列出读取过的证据文件，控制在 12-15 个顶层节点内，校验 Mermaid，写入 .techne/viz/，并构建本地 viewer。
 ```
 
 在 Codex 或其他 Agent Skills 宿主中这样问：
 
 ```text
-使用 viz skill。请扫描当前仓库，画 architecture 图。先判断项目形状，列出读取过的证据文件，控制在 12-15 个顶层节点内，校验 Mermaid，写入 .techne/viz/，并构建本地 viewer。
+使用 anchor-viz skill。请扫描当前仓库，画 architecture 图。先判断项目形状，列出读取过的证据文件，控制在 12-15 个顶层节点内，校验 Mermaid，写入 .techne/viz/，并构建本地 viewer。
 ```
 
 一次好的结果应该包含：
@@ -81,55 +81,55 @@ npx skills update viz -g -y
 
 ## 语言行为
 
-`viz` 会跟随用户的主要语言。你用中文提问，图表标题、展示 label、关系说明和简短说明优先中文；你用英文提问，这些面向人的文本就用英文。代码证据保持仓库原文：路径、Mermaid ID、symbol、class/function 名、package 名，以及 API、SDK、CLI、HTTP、SwiftUI、AppKit、React 这类通用技术词不会被强行翻译。
+`anchor-viz` 会跟随用户的主要语言。你用中文提问，图表标题、展示 label、关系说明和简短说明优先中文；你用英文提问，这些面向人的文本就用英文。代码证据保持仓库原文：路径、Mermaid ID、symbol、class/function 名、package 名，以及 API、SDK、CLI、HTTP、SwiftUI、AppKit、React 这类通用技术词不会被强行翻译。
 
 ## 推荐测试方式
 
 ### macOS 项目
 
 ```text
-/techne:viz
+/techne:anchor-viz
 请扫描当前 macOS 项目，画 architecture 图。重点识别 Xcode / SwiftPM、targets、App entry、SwiftUI/AppKit 边界、本地存储、网络层、extension 或后台任务。只画从文件读到证据的关系。
 ```
 
 ### 前端项目
 
 ```text
-/techne:viz
+/techne:anchor-viz
 请扫描当前前端仓库，画 architecture 图。重点识别 package manager、workspace、应用入口、routes、state 管理、API client、构建和部署配置、主要 feature modules。控制在 12-15 个顶层节点内，超出就拆图。
 ```
 
 ### 请求链路
 
 ```text
-/techne:viz
+/techne:anchor-viz
 请画登录流程的 interaction / sequenceDiagram。从 route/page entry 到表单提交、校验、状态更新、API client、错误处理和导航。每个 participant 和 message 都要来自实际读取的文件。
 ```
 
 ### 数据模型
 
 ```text
-/techne:viz
+/techne:anchor-viz
 请画当前项目的数据模型，用 data-model / erDiagram。只根据 schema、migration、ORM/entity declaration 画实体和关系；没有外键或关联声明证据的关系不要画。
 ```
 
 ### 状态流转
 
 ```text
-/techne:viz
+/techne:anchor-viz
 请画订单状态流转，用 state-model / stateDiagram-v2。先找到状态枚举、reducer、guard、workflow 或 transition handler，再画真实转移。
 ```
 
 ### 类型结构
 
 ```text
-/techne:viz
+/techne:anchor-viz
 请针对 Settings 模块画 type-structure / classDiagram。范围只覆盖 public-facing 类型、protocol/interface、主要 view model 和 service 依赖，不要画全项目。
 ```
 
 ## 输出
 
-`viz` 会把生成的图写进目标项目，而不是 techne 自己：
+`anchor-viz` 会把生成的图写进目标项目，而不是 techne 自己：
 
 ```text
 .techne/
@@ -150,7 +150,7 @@ open .techne/viz/index.html
 带目标项目校验 Mermaid，这样 provenance 会被真实检查：
 
 ```bash
-node skills/viz/scripts/validate-mermaid.mjs diagram.md --project /path/to/project --max-nodes 15
+node skills/anchor-viz/scripts/validate-mermaid.mjs diagram.md --project /path/to/project --max-nodes 15
 ```
 
 写入目标项目。`store_viz.py` 会自己运行 validator，并派生
@@ -158,7 +158,7 @@ node skills/viz/scripts/validate-mermaid.mjs diagram.md --project /path/to/proje
 source 或 coverage：
 
 ```bash
-python3 skills/viz/scripts/store_viz.py \
+python3 skills/anchor-viz/scripts/store_viz.py \
   --project /path/to/project \
   --name login-flow \
   --title "Login flow" \
@@ -182,4 +182,4 @@ python3 skills/viz/scripts/store_viz.py \
 
 当前版本不支持任意 Mermaid 图。Gantt、pie、journey、timeline、mindmap、Git graph、C4、quadrant、requirement、packet、Sankey 等图族暂不支持。
 
-当它无法读取项目文件、图表类型不明确、范围没有边界、代码证据不足或 Mermaid 校验失败时，`viz` 应该停下来问你，而不是硬画。
+当它无法读取项目文件、图表类型不明确、范围没有边界、代码证据不足或 Mermaid 校验失败时，`anchor-viz` 应该停下来问你，而不是硬画。

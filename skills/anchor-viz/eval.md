@@ -1,4 +1,4 @@
-# viz Eval
+# anchor-viz Eval
 
 This is the empirical acceptance methodology. Codex only runs mechanical checks;
 Claude and the maintainer run the skill-level evaluation in an authenticated
@@ -6,12 +6,12 @@ Claude context.
 
 ## Acceptance Status
 
-- `viz` shipped through the build work tracked in #11 (closed 2026-06-08). Its
+- `anchor-viz` shipped through the build work tracked in #11 (closed 2026-06-08). Its
   mechanical provenance methodology is in "Mechanical Provenance Fixtures" below.
-- 2026-06-14 — Empirical acceptance (baseline vs. with-`viz`, per the Test Set,
-  Metrics, and Pass Bar below): **no result is recorded**. Like `repro`, `vet`,
-  and `intake`, `viz` merged ahead of a recorded step-5 result, and it has no
-  dedicated open tracking issue. Until a run is recorded here, `viz` has not
+- 2026-06-14 — Empirical acceptance (baseline vs. with-`anchor-viz`, per the Test Set,
+  Metrics, and Pass Bar below): **no result is recorded**. Like `anchor-repro`, `anchor-vet`,
+  and `anchor-intake`, `anchor-viz` merged ahead of a recorded step-5 result, and it has no
+  dedicated open tracking issue. Until a run is recorded here, `anchor-viz` has not
   demonstrably cleared its empirical bar. Verification is owed and is run
   manually by the maintainer in real projects. Durable cross-skill tracker:
   `ROADMAP.md` Validation Status.
@@ -32,7 +32,7 @@ Do not commit private paths, generated diagrams, or `.techne/` output.
 
 ## Baseline
 
-Ask the model to draw the requested diagram without `viz`.
+Ask the model to draw the requested diagram without `anchor-viz`.
 
 Record:
 
@@ -47,7 +47,7 @@ Record:
 
 ## With Skill
 
-Invoke `viz` on the same repos. The skill must:
+Invoke `anchor-viz` on the same repos. The skill must:
 
 - Route to the correct `diagramKind`, or ask one clarification when ambiguous.
 - Classify shape with evidence.
@@ -77,11 +77,11 @@ Invoke `viz` on the same repos. The skill must:
   groups match declarations.
 - Complexity: diagrams stay within cap or split/narrow scope.
 - Renderability: Mermaid validates and viewer renders.
-- Improvement: with-`viz` beats baseline on at least one metric.
+- Improvement: with-`anchor-viz` beats baseline on at least one metric.
 
 ## Pass Bar
 
-Pass only if with-`viz` has approximately zero fabrications, correct shape,
+Pass only if with-`anchor-viz` has approximately zero fabrications, correct shape,
 correct diagram-kind routing, readable complexity, successful
 validation/rendering, language fit for user-facing text, visible improvement
 over baseline on at least one metric, and passes the non-code

@@ -1,9 +1,9 @@
 ---
-name: intake
+name: anchor-intake
 description: Interrogate a written engineering implementation brief before work starts. Use when a user brings a ticket, PRD, design note, or substantive engineering task brief and wants to begin implementation planning; force every fixed rubric element to be accounted, cite present/weak claims against the brief, surface gaps, solution-as-goal traps, contradictions, and questions, then emit an intent-level plan. Do not use for bare one-line requests, non-engineering artifacts, code diff review, bug fixing, or execution itself.
 ---
 
-# intake
+# anchor-intake
 
 Force the skipped move before execution: interrogate the written brief against a
 fixed engineering implementation rubric, then plan only after gaps and weak
@@ -24,12 +24,12 @@ later proves unsupported, use `finalize --unscopable --reason ...`.
 Boundary test: can you point to a user-authored written artifact and ask whether
 it names the engineering goal, users, measurable success threshold, scope,
 non-goals, inputs, data sources, dependencies, constraints, and acceptance
-method? If yes, use `intake`. If no, eject or ask for the brief first.
+method? If yes, use `anchor-intake`. If no, eject or ask for the brief first.
 
 ## Forced Procedure
 
 1. **Capture the brief.** Save the user-authored artifact verbatim. Run:
-   `python3 skills/intake/scripts/intake_gate.py init --project <root> --plan <slug> --brief-file <path>`.
+   `python3 skills/anchor-intake/scripts/intake_gate.py init --project <root> --plan <slug> --brief-file <path>`.
 2. **Read the brief in full.** Do not fill the rubric from memory or from the
    user's surrounding chat if the value is not in the captured brief.
 3. **Account every fixed rubric element.** For each of the ten elements, write
@@ -46,10 +46,10 @@ method? If yes, use `intake`. If no, eject or ask for the brief first.
    `id`, `dependsOnAssumptions`, `dependsOnSteps`, `verifiableOutcome`, and at
    least one terminal step reachable from a root step.
 7. **Check and repair.** Run:
-   `python3 skills/intake/scripts/intake_gate.py check --project <root> --plan <slug>`.
+   `python3 skills/anchor-intake/scripts/intake_gate.py check --project <root> --plan <slug>`.
    Fix structural failures by doing the missing intake work, not by padding JSON.
 8. **Finalize.** Run:
-   `python3 skills/intake/scripts/intake_gate.py finalize --project <root> --plan <slug>`.
+   `python3 skills/anchor-intake/scripts/intake_gate.py finalize --project <root> --plan <slug>`.
    Relay the generated `intakeReport.json` to the user, especially gaps, weak
    elements, questions, solution-as-goal findings, contradictions, and warnings.
 
@@ -118,5 +118,5 @@ STOPLIST/RUBRIC-LABEL set, shape rules, warning semantics, and known weak spots.
 - Stop before `finalize` if `check` reports blocking failures.
 - Stop and use `--unscopable --reason` if the artifact is not an engineering
   implementation brief or is too garbled/thin to interrogate honestly.
-- Stop before executing the work. `intake` ends at a surfaced report and
+- Stop before executing the work. `anchor-intake` ends at a surfaced report and
   intent-level plan; implementation belongs to the next workflow step.

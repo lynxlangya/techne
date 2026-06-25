@@ -1,6 +1,6 @@
-# vet
+# anchor-vet
 
-`vet` 是一个「证据门控」代码 review skill。它要求 reviewer 先用 git 锚定
+`anchor-vet` 是一个「证据门控」代码 review skill。它要求 reviewer 先用 git 锚定
 PR / branch 的真实 diff，再核算变更符号的影响半径、核对 claim 和 citation，
 最后只能给出结构上可接受的 verdict。
 
@@ -24,7 +24,7 @@ gh pr view 123 --json title,body --jq '.title + "\n\n" + (.body // "")' > /tmp/p
 锚定 review：
 
 ```bash
-python3 skills/vet/scripts/vet_gate.py init \
+python3 skills/anchor-vet/scripts/vet_gate.py init \
   --project /path/to/project \
   --review pr-123 \
   --base origin/main \
@@ -35,8 +35,8 @@ python3 skills/vet/scripts/vet_gate.py init \
 填写 `.techne/review/pr-123/review.json`，然后检查并收口：
 
 ```bash
-python3 skills/vet/scripts/vet_gate.py check --project /path/to/project --review pr-123
-python3 skills/vet/scripts/vet_gate.py close --project /path/to/project --review pr-123 --verdict request-changes
+python3 skills/anchor-vet/scripts/vet_gate.py check --project /path/to/project --review pr-123
+python3 skills/anchor-vet/scripts/vet_gate.py close --project /path/to/project --review pr-123 --verdict request-changes
 ```
 
 `.techne/` 是目标项目里的生成产物，不要提交到 techne 仓库。

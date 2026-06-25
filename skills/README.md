@@ -24,23 +24,26 @@ filesystem.
 
 Current real skills:
 
-- `viz`: investigate a real codebase by diagramming it. It is a typed diagram
+The seeded set uses the `anchor-*` prefix because these skills anchor model
+work to external evidence rather than self-reported completion.
+
+- `anchor-viz`: investigate a real codebase by diagramming it. It is a typed diagram
   router over architecture, interaction, data-model, state-model, and
-  type-structure diagrams. See [viz/README.md](viz/README.md) for human-facing
-  usage and [viz/README-CN.md](viz/README-CN.md) for Chinese usage.
-- `repro`: reproduce a behavioral bug before fixing it, record the failing
+  type-structure diagrams. See [anchor-viz/README.md](anchor-viz/README.md) for human-facing
+  usage and [anchor-viz/README-CN.md](anchor-viz/README-CN.md) for Chinese usage.
+- `anchor-repro`: reproduce a behavioral bug before fixing it, record the failing
   probe, and verify the fix with the same probe. See
-  [repro/README.md](repro/README.md) for human-facing usage and
-  [repro/README-CN.md](repro/README-CN.md) for Chinese usage.
-- `vet`: review a git-anchored diff through computed scope, accounted blast
+  [anchor-repro/README.md](anchor-repro/README.md) for human-facing usage and
+  [anchor-repro/README-CN.md](anchor-repro/README-CN.md) for Chinese usage.
+- `anchor-vet`: review a git-anchored diff through computed scope, accounted blast
   radius, verified claims/findings, and admissible verdicts. See
-  [vet/README.md](vet/README.md) for human-facing usage and
-  [vet/README-CN.md](vet/README-CN.md) for Chinese usage.
-- `intake`: interrogate a written engineering implementation brief before work
+  [anchor-vet/README.md](anchor-vet/README.md) for human-facing usage and
+  [anchor-vet/README-CN.md](anchor-vet/README-CN.md) for Chinese usage.
+- `anchor-intake`: interrogate a written engineering implementation brief before work
   starts, accounting the fixed rubric and surfacing gaps, traps, contradictions,
   and questions before emitting an intent-level plan. See
-  [intake/README.md](intake/README.md) for human-facing usage and
-  [intake/README-CN.md](intake/README-CN.md) for Chinese usage.
+  [anchor-intake/README.md](anchor-intake/README.md) for human-facing usage and
+  [anchor-intake/README-CN.md](anchor-intake/README-CN.md) for Chinese usage.
 
 ## Skill Body
 
@@ -82,7 +85,7 @@ Use support files only when needed:
 Do not commit empty support folders.
 
 For executable helpers, keep generated output out of this repo. For example,
-`viz` writes target-project output under `.techne/viz/`; those files are
+`anchor-viz` writes target-project output under `.techne/viz/`; those files are
 artifacts, not source.
 
 ## One Body, Multiple Thin Skins

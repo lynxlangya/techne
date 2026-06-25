@@ -1,6 +1,6 @@
-# viz
+# anchor-viz
 
-`viz` is a techne skill for investigating a real codebase by diagramming it. It
+`anchor-viz` is a techne skill for investigating a real codebase by diagramming it. It
 does not draw from intuition alone. It scans the repository, chooses the right
 diagram kind, cites the evidence it read, validates the Mermaid source, stores
 the diagram in the target project, and builds a local file-based viewer.
@@ -33,11 +33,11 @@ to install the whole techne skill set:
 npx skills add lynxlangya/techne -a codex -g -y
 ```
 
-If you intentionally want only `viz`, install the single skill:
+If you intentionally want only `anchor-viz`, install the single skill:
 
 ```bash
-npx skills add lynxlangya/techne --skill viz -a codex -g -y
-npx skills update viz -g -y
+npx skills add lynxlangya/techne --skill anchor-viz -a codex -g -y
+npx skills update anchor-viz -g -y
 ```
 
 Other hosts and fallback commands are documented in the root
@@ -45,12 +45,12 @@ Other hosts and fallback commands are documented in the root
 
 ## Quick Start
 
-Open your target project in the agent, then invoke `viz` with a bounded request.
+Open your target project in the agent, then invoke `anchor-viz` with a bounded request.
 
 Claude Code:
 
 ```text
-/techne:viz
+/techne:anchor-viz
 Scan this repository and draw an architecture diagram. Identify the project
 shape, cite the files you read, keep the diagram within 12-15 top-level nodes,
 validate it, store it, build the local viewer, and open it when ready.
@@ -59,7 +59,7 @@ validate it, store it, build the local viewer, and open it when ready.
 Codex or another Agent Skills host:
 
 ```text
-Use the viz skill. Scan this repository and draw an architecture diagram.
+Use the anchor-viz skill. Scan this repository and draw an architecture diagram.
 Identify the project shape, cite the files you read, keep the diagram within
 12-15 top-level nodes, validate it, store it, and build the local viewer.
 ```
@@ -90,12 +90,12 @@ project's `.gitignore` when needed.
 | Status or workflow lifecycle | `state-model` | `stateDiagram-v2` / `stateDiagram` | Order states, review flows, reducers, state machines. |
 | Classes, interfaces, protocols, structs, or public types | `type-structure` | `classDiagram` | Bounded module/type structure. |
 
-If your request fits multiple kinds, `viz` should ask one clarification instead
+If your request fits multiple kinds, `anchor-viz` should ask one clarification instead
 of guessing.
 
 ## Language Behavior
 
-`viz` follows the user's language for human-facing text. Ask in English and the
+`anchor-viz` follows the user's language for human-facing text. Ask in English and the
 diagram title, display labels, and short explanations should be English. Ask in
 Chinese and those user-facing labels should be Chinese. Code-facing evidence
 stays as written in the repository: paths, Mermaid IDs, symbols, class/function
@@ -107,7 +107,7 @@ and React are not forced through translation.
 ### macOS or Native App Architecture
 
 ```text
-/techne:viz
+/techne:anchor-viz
 Scan this macOS project and draw an architecture diagram. Focus on the Xcode or
 SwiftPM roots, app entrypoint, targets, SwiftUI/AppKit boundary, persistence,
 network layer, extensions, background work, and any edge/backend integration.
@@ -117,7 +117,7 @@ Only draw relationships backed by files you read.
 ### Frontend Architecture
 
 ```text
-/techne:viz
+/techne:anchor-viz
 Scan this frontend repository and draw an architecture diagram. Identify the
 package manager, workspace shape, app entry, routes, state management, API
 client, build/deploy config, and major feature modules. Keep it within 12-15
@@ -127,7 +127,7 @@ top-level nodes or split the diagram.
 ### Interaction Flow
 
 ```text
-/techne:viz
+/techne:anchor-viz
 Draw the login flow as an interaction diagram. Start from the route or page
 entrypoint, then follow form submission, validation, state updates, API calls,
 error handling, and navigation. Every participant and message must come from
@@ -137,7 +137,7 @@ files you read.
 ### Data Model
 
 ```text
-/techne:viz
+/techne:anchor-viz
 Draw the database relationships as a data-model diagram. Use migrations, schema
 files, or ORM/entity declarations. Exclude relationships that are only guessed
 from names.
@@ -146,7 +146,7 @@ from names.
 ### State Model
 
 ```text
-/techne:viz
+/techne:anchor-viz
 Draw the order status lifecycle as a state-model diagram. First find the status
 enum, reducer, transition map, guard, workflow, or handler that proves each
 transition.
@@ -155,7 +155,7 @@ transition.
 ### Type Structure
 
 ```text
-/techne:viz
+/techne:anchor-viz
 Draw the type structure for the Settings module as a classDiagram. Bound the
 scope to public types, protocols/interfaces, view models, services, and direct
 composition or inheritance relationships.
@@ -163,7 +163,7 @@ composition or inheritance relationships.
 
 ## Output
 
-`viz` stores generated diagrams in the target project, not in techne itself:
+`anchor-viz` stores generated diagrams in the target project, not in techne itself:
 
 ```text
 .techne/
@@ -185,7 +185,7 @@ open .techne/viz/index.html
 Validate against a target project so provenance is enforced:
 
 ```bash
-node skills/viz/scripts/validate-mermaid.mjs diagram.md --project /path/to/project --max-nodes 15
+node skills/anchor-viz/scripts/validate-mermaid.mjs diagram.md --project /path/to/project --max-nodes 15
 ```
 
 Store a diagram. `store_viz.py` runs the validator itself and derives
@@ -193,7 +193,7 @@ Store a diagram. `store_viz.py` runs the validator itself and derives
 self-reported source or coverage metadata:
 
 ```bash
-python3 skills/viz/scripts/store_viz.py \
+python3 skills/anchor-viz/scripts/store_viz.py \
   --project /path/to/project \
   --name login-flow \
   --title "Login flow" \
@@ -203,7 +203,7 @@ python3 skills/viz/scripts/store_viz.py \
 
 ## What to Check
 
-When testing `viz`, judge the run by evidence, not by visual polish alone:
+When testing `anchor-viz`, judge the run by evidence, not by visual polish alone:
 
 - Did it pick the correct `diagramKind`?
 - Did every node, participant, entity, state, type, edge, message, relationship,
@@ -216,7 +216,7 @@ When testing `viz`, judge the run by evidence, not by visual polish alone:
 
 ## Boundaries
 
-`viz` intentionally does not support arbitrary Mermaid diagrams. Unsupported
+`anchor-viz` intentionally does not support arbitrary Mermaid diagrams. Unsupported
 families include Gantt, pie, journey, timeline, mindmap, Git graph, C4,
 quadrant, requirement, packet, and Sankey diagrams.
 

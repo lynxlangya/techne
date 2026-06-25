@@ -13,21 +13,21 @@ contains:
 - `.cursor-plugin/plugin.json` and `gemini-extension.json` as thin host skins.
 - `INSTALL.md` as the install matrix for Claude, Codex, Cursor, Gemini, Kimi,
   and the universal Agent Skills fallback.
-- `skills/viz/`, the first real skill: a typed diagram router for codebase
+- `skills/anchor-viz/`, the first real skill: a typed diagram router for codebase
   architecture, request interactions, data models, state models, and type
   structures, with a mechanical provenance gate.
-- `skills/repro/`, the second real skill: a repro-first bugfix gate that forces
+- `skills/anchor-repro/`, the second real skill: a repro-first bugfix gate that forces
   fail → fix → same-probe verification through a run ledger.
-- `skills/vet/`, the third real skill: an evidence-gated diff review helper
+- `skills/anchor-vet/`, the third real skill: an evidence-gated diff review helper
   that computes scope, blast radius, claims, findings, and verdict
   admissibility.
-- `skills/intake/`, the fourth real skill: a written engineering brief
+- `skills/anchor-intake/`, the fourth real skill: a written engineering brief
   interrogation gate that accounts a fixed rubric before work starts.
 
 There is still **no root app, no root package manager, no CI, and no repo-wide
-test runner**. `skills/viz/scripts/package.json` only pins helper dependencies
-for that skill's Mermaid validator; `skills/repro/scripts/repro_ledger.py` and
-`skills/vet/scripts/vet_gate.py` and `skills/intake/scripts/intake_gate.py` are
+test runner**. `skills/anchor-viz/scripts/package.json` only pins helper dependencies
+for that skill's Mermaid validator; `skills/anchor-repro/scripts/repro_ledger.py` and
+`skills/anchor-vet/scripts/vet_gate.py` and `skills/anchor-intake/scripts/intake_gate.py` are
 dependency-free Python 3 stdlib (POSIX-only). Do not infer commands,
 dependencies, or architecture from the legacy library; that direction was
 abandoned.
@@ -45,10 +45,10 @@ install instructions that point back to that shared body.
 
 ## Current skill surface
 
-Four skills are seeded: `skills/viz`, `skills/repro`, `skills/vet`, and
-`skills/intake`.
+Four skills are seeded: `skills/anchor-viz`, `skills/anchor-repro`, `skills/anchor-vet`, and
+`skills/anchor-intake`.
 
-`skills/viz` (coding/investigate):
+`skills/anchor-viz` (coding/investigate):
 
 - `SKILL.md` forces the cognitive procedure: route the diagram kind, read real
   evidence, draw only evidenced relationships, enforce complexity gates, mark
@@ -73,7 +73,7 @@ Four skills are seeded: `skills/viz`, `skills/repro`, `skills/vet`, and
 - `scripts/build_viewer.py` builds a self-contained `.techne/viz/index.html`.
   It does not start a server.
 
-`skills/repro` (coding/debug):
+`skills/anchor-repro` (coding/debug):
 
 - `SKILL.md` forces the cognitive procedure: trigger-check the task as a
   behavioral bug, capture a stable `--expect` anchor, demonstrate the failure
@@ -86,7 +86,7 @@ Four skills are seeded: `skills/viz`, `skills/repro`, `skills/vet`, and
   fail → later same-identity pass, or on a loud `mark-unreproduced`
   speculative path.
 
-`skills/vet` (coding/review-diff):
+`skills/anchor-vet` (coding/review-diff):
 
 - `SKILL.md` forces review through a git-anchored scope, full hunk read,
   blast-radius walk, claim cross-examination, severity-honest findings, and
@@ -96,7 +96,7 @@ Four skills are seeded: `skills/viz`, `skills/repro`, `skills/vet`, and
   `review.json`, computes `report.json`, and closes `verdict.json`.
   Classification and admissibility are computed, never self-reported.
 
-`skills/intake` (general/interrogate):
+`skills/anchor-intake` (general/interrogate):
 
 - `SKILL.md` forces pre-work interrogation of a written engineering
   implementation brief: account the fixed ten-element rubric, cite present/weak
@@ -124,14 +124,14 @@ claude plugin validate . --strict
 claude --bare --plugin-dir . plugin details techne
 ```
 
-For `viz` script changes, create temp fixtures and temp target projects. The
+For `anchor-viz` script changes, create temp fixtures and temp target projects. The
 validator needs `mermaid@11.15.0` and `jsdom` in `TECHNE_VIZ_NODE_MODULES`,
-`skills/viz/scripts/node_modules`, the current directory, or an ancestor:
+`skills/anchor-viz/scripts/node_modules`, the current directory, or an ancestor:
 
 ```bash
-node skills/viz/scripts/validate-mermaid.mjs diagram.md --project /tmp/project --max-nodes 15
-python3 skills/viz/scripts/store_viz.py --project /tmp/project --name diagram --title "Diagram" --diagram diagram.md --shape monorepo
-python3 skills/viz/scripts/build_viewer.py --project /tmp/project
+node skills/anchor-viz/scripts/validate-mermaid.mjs diagram.md --project /tmp/project --max-nodes 15
+python3 skills/anchor-viz/scripts/store_viz.py --project /tmp/project --name diagram --title "Diagram" --diagram diagram.md --shape monorepo
+python3 skills/anchor-viz/scripts/build_viewer.py --project /tmp/project
 git diff --check
 ```
 
@@ -139,33 +139,33 @@ For viewer work, also open the generated `file://.../.techne/viz/index.html`
 and verify the relevant diagrams render without console errors or external
 network loads.
 
-For `repro` script changes, exercise the ledger against throwaway `/tmp`
-projects — `skills/repro/eval.md` fixtures A–X are the reference suite:
+For `anchor-repro` script changes, exercise the ledger against throwaway `/tmp`
+projects — `skills/anchor-repro/eval.md` fixtures A–X are the reference suite:
 
 ```bash
-python3 -m py_compile skills/repro/scripts/repro_ledger.py
-python3 skills/repro/scripts/repro_ledger.py run --project /tmp/project --bug demo --expect "boom" -- python3 -c 'print("boom"); raise SystemExit(1)'
-python3 skills/repro/scripts/repro_ledger.py status --project /tmp/project --bug demo
+python3 -m py_compile skills/anchor-repro/scripts/repro_ledger.py
+python3 skills/anchor-repro/scripts/repro_ledger.py run --project /tmp/project --bug demo --expect "boom" -- python3 -c 'print("boom"); raise SystemExit(1)'
+python3 skills/anchor-repro/scripts/repro_ledger.py status --project /tmp/project --bug demo
 ```
 
-For `vet` script changes, exercise the gate against throwaway `/tmp` projects —
-`skills/vet/eval.md` fixtures A–X, L1/L2, Y, Z, AA–AH, and house fixtures are
+For `anchor-vet` script changes, exercise the gate against throwaway `/tmp` projects —
+`skills/anchor-vet/eval.md` fixtures A–X, L1/L2, Y, Z, AA–AH, and house fixtures are
 the reference suite:
 
 ```bash
-python3 -m py_compile skills/vet/scripts/vet_gate.py
-python3 skills/vet/scripts/vet_gate.py init --project /tmp/project --review demo --base <base> --head HEAD --claims-file /tmp/claims.txt
-python3 skills/vet/scripts/vet_gate.py check --project /tmp/project --review demo
+python3 -m py_compile skills/anchor-vet/scripts/vet_gate.py
+python3 skills/anchor-vet/scripts/vet_gate.py init --project /tmp/project --review demo --base <base> --head HEAD --claims-file /tmp/claims.txt
+python3 skills/anchor-vet/scripts/vet_gate.py check --project /tmp/project --review demo
 ```
 
-For `intake` script changes, exercise the gate against throwaway `/tmp` briefs —
-`skills/intake/eval.md` fixtures A–L, floor fixtures, and house fixtures are the
+For `anchor-intake` script changes, exercise the gate against throwaway `/tmp` briefs —
+`skills/anchor-intake/eval.md` fixtures A–L, floor fixtures, and house fixtures are the
 reference suite:
 
 ```bash
-python3 -m py_compile skills/intake/scripts/intake_gate.py
-python3 skills/intake/scripts/intake_gate.py init --project /tmp/project --plan demo --brief-file /tmp/brief.txt
-python3 skills/intake/scripts/intake_gate.py check --project /tmp/project --plan demo
+python3 -m py_compile skills/anchor-intake/scripts/intake_gate.py
+python3 skills/anchor-intake/scripts/intake_gate.py init --project /tmp/project --plan demo --brief-file /tmp/brief.txt
+python3 skills/anchor-intake/scripts/intake_gate.py check --project /tmp/project --plan demo
 ```
 
 ## Legacy code

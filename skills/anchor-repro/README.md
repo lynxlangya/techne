@@ -1,6 +1,6 @@
-# repro
+# anchor-repro
 
-`repro` is a techne skill for bug fixes. It forces the AI collaborator to record
+`anchor-repro` is a techne skill for bug fixes. It forces the AI collaborator to record
 a failing reproduction before editing code, then verify the fix by rerunning the
 same probe identity.
 
@@ -33,11 +33,11 @@ to install the whole techne skill set:
 npx skills add lynxlangya/techne -a codex -g -y
 ```
 
-If you intentionally want only `repro`, install the single skill:
+If you intentionally want only `anchor-repro`, install the single skill:
 
 ```bash
-npx skills add lynxlangya/techne --skill repro -a codex -g -y
-npx skills update repro -g -y
+npx skills add lynxlangya/techne --skill anchor-repro -a codex -g -y
+npx skills update anchor-repro -g -y
 ```
 
 Other hosts and fallback commands are documented in the root
@@ -45,12 +45,12 @@ Other hosts and fallback commands are documented in the root
 
 ## Quick Start
 
-Open the target project in your agent, then ask for a bug fix with `repro`.
+Open the target project in your agent, then ask for a bug fix with `anchor-repro`.
 
 Claude Code:
 
 ```text
-/techne:repro
+/techne:anchor-repro
 Fix this bug: running npm test in packages/app fails with "TypeError: cannot
 read properties of undefined". Reproduce it first, then verify with the same
 probe after the fix.
@@ -59,7 +59,7 @@ probe after the fix.
 Codex or another Agent Skills host:
 
 ```text
-Use the repro skill. Fix this bug: the login test fails with "TypeError:
+Use the anchor-repro skill. Fix this bug: the login test fails with "TypeError:
 cannot read properties of undefined". Reproduce it first, then verify with the
 same probe after the fix.
 ```
@@ -81,7 +81,7 @@ project's `.gitignore` when needed.
 Run a package-local failing probe:
 
 ```bash
-python3 /path/to/techne/skills/repro/scripts/repro_ledger.py run \
+python3 /path/to/techne/skills/anchor-repro/scripts/repro_ledger.py run \
   --project /path/to/project \
   --bug login-crash \
   --cwd packages/app \
@@ -93,7 +93,7 @@ python3 /path/to/techne/skills/repro/scripts/repro_ledger.py run \
 After fixing, rerun the identical probe and close:
 
 ```bash
-python3 /path/to/techne/skills/repro/scripts/repro_ledger.py run \
+python3 /path/to/techne/skills/anchor-repro/scripts/repro_ledger.py run \
   --project /path/to/project \
   --bug login-crash \
   --cwd packages/app \
@@ -101,7 +101,7 @@ python3 /path/to/techne/skills/repro/scripts/repro_ledger.py run \
   --timeout 60 \
   -- npm test -- login.test.ts
 
-python3 /path/to/techne/skills/repro/scripts/repro_ledger.py close \
+python3 /path/to/techne/skills/anchor-repro/scripts/repro_ledger.py close \
   --project /path/to/project \
   --bug login-crash
 ```
@@ -109,7 +109,7 @@ python3 /path/to/techne/skills/repro/scripts/repro_ledger.py close \
 If an environment variable is part of the probe, encode it in shell mode:
 
 ```bash
-python3 /path/to/techne/skills/repro/scripts/repro_ledger.py run \
+python3 /path/to/techne/skills/anchor-repro/scripts/repro_ledger.py run \
   --project /path/to/project \
   --bug locale-sort \
   --shell \
@@ -123,7 +123,7 @@ runs that string with `sh -c` and uses the same string as identity.
 If reproduction is genuinely impossible:
 
 ```bash
-python3 /path/to/techne/skills/repro/scripts/repro_ledger.py mark-unreproduced \
+python3 /path/to/techne/skills/anchor-repro/scripts/repro_ledger.py mark-unreproduced \
   --project /path/to/project \
   --bug customer-only-crash \
   --no-probe-possible \
@@ -132,7 +132,7 @@ python3 /path/to/techne/skills/repro/scripts/repro_ledger.py mark-unreproduced \
 
 ## What Gets Written
 
-`repro` writes generated ledgers in the target project:
+`anchor-repro` writes generated ledgers in the target project:
 
 ```text
 .techne/

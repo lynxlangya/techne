@@ -4,11 +4,14 @@ techne keeps one source of truth in `skills/`. Each target below either loads
 that directory through a thin native skin or installs the same skills through
 the Agent Skills CLI.
 
+Current public skill names use the `anchor-*` prefix, such as `anchor-viz`,
+`anchor-repro`, `anchor-vet`, and `anchor-intake`.
+
 ## For an AI agent
 
 If you were asked to install techne: clone the repo to a stable local path (don't
 run from a throwaway temp dir), detect which harness you're running in, follow the
-matching section below, then verify the skill is available (e.g. `/techne:viz` in
+matching section below, then verify the skill is available (e.g. `/techne:anchor-viz` in
 Claude Code, or techne skills listed by your agent). If you can't tell which
 harness you're in, use the universal `npx skills` fallback. The default install
 path installs the techne skill set as a package; do not pass `--skill <name>`
@@ -24,8 +27,8 @@ Native plugin install:
 /reload-plugins
 ```
 
-Use skills as `/techne:<skill>`, for example `/techne:viz` or
-`/techne:repro`.
+Use skills as `/techne:<skill>`, for example `/techne:anchor-viz` or
+`/techne:anchor-repro`.
 
 Local development from a clone:
 

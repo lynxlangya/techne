@@ -1,6 +1,6 @@
-# vet
+# anchor-vet
 
-`vet` is an evidence-gated diff review skill. It makes an AI reviewer anchor a
+`anchor-vet` is an evidence-gated diff review skill. It makes an AI reviewer anchor a
 PR or branch to git, account the blast radius of changed symbols, verify claims
 and citations, and render only admissible verdicts.
 
@@ -24,7 +24,7 @@ gh pr view 123 --json title,body --jq '.title + "\n\n" + (.body // "")' > /tmp/p
 Anchor the review:
 
 ```bash
-python3 skills/vet/scripts/vet_gate.py init \
+python3 skills/anchor-vet/scripts/vet_gate.py init \
   --project /path/to/project \
   --review pr-123 \
   --base origin/main \
@@ -35,8 +35,8 @@ python3 skills/vet/scripts/vet_gate.py init \
 Write `.techne/review/pr-123/review.json`, then check and close:
 
 ```bash
-python3 skills/vet/scripts/vet_gate.py check --project /path/to/project --review pr-123
-python3 skills/vet/scripts/vet_gate.py close --project /path/to/project --review pr-123 --verdict request-changes
+python3 skills/anchor-vet/scripts/vet_gate.py check --project /path/to/project --review pr-123
+python3 skills/anchor-vet/scripts/vet_gate.py close --project /path/to/project --review pr-123 --verdict request-changes
 ```
 
 Generated `.techne/` output belongs to the target project and should not be

@@ -1,6 +1,6 @@
-# intake
+# anchor-intake
 
-`intake` 是一个在开工前审问书面工程实现 brief 的 techne skill。它会强制 AI 协作者按固定的 10 项 rubric 逐项核对，把 `present` / `present-weak` 锚定到 brief 原文 span，暴露缺口、solution-as-goal 陷阱和矛盾，再输出 intent-level 的计划。
+`anchor-intake` 是一个在开工前审问书面工程实现 brief 的 techne skill。它会强制 AI 协作者按固定的 10 项 rubric 逐项核对，把 `present` / `present-weak` 锚定到 brief 原文 span，暴露缺口、solution-as-goal 陷阱和矛盾，再输出 intent-level 的计划。
 
 适用于 ticket、PRD、设计说明、较完整的工程实现 brief。不适用于裸的一句话需求、非工程文档、代码 review、bug 修复或直接执行。
 
@@ -28,11 +28,11 @@ Codex 常规安装建议用根目录 [INSTALL.md](../../INSTALL.md) 的整套安
 npx skills add lynxlangya/techne -a codex -g -y
 ```
 
-如果只想单独安装 `intake`：
+如果只想单独安装 `anchor-intake`：
 
 ```bash
-npx skills add lynxlangya/techne --skill intake -a codex -g -y
-npx skills update intake -g -y
+npx skills add lynxlangya/techne --skill anchor-intake -a codex -g -y
+npx skills update anchor-intake -g -y
 ```
 
 其他宿主和兜底安装方式见根目录 [INSTALL.md](../../INSTALL.md)。
@@ -44,7 +44,7 @@ npx skills update intake -g -y
 Claude Code：
 
 ```text
-/techne:intake
+/techne:anchor-intake
 Interrogate this implementation brief before planning:
 <粘贴 ticket / PRD / design note>
 ```
@@ -52,7 +52,7 @@ Interrogate this implementation brief before planning:
 Codex 或其他 Agent Skills 宿主：
 
 ```text
-Use the intake skill. Interrogate this engineering implementation brief before
+Use the anchor-intake skill. Interrogate this engineering implementation brief before
 planning:
 <粘贴 ticket / PRD / design note>
 ```
@@ -74,7 +74,7 @@ planning:
 从 brief 文件初始化：
 
 ```bash
-python3 /path/to/techne/skills/intake/scripts/intake_gate.py init \
+python3 /path/to/techne/skills/anchor-intake/scripts/intake_gate.py init \
   --project /path/to/project \
   --plan login-brief \
   --brief-file /tmp/login-brief.txt
@@ -83,7 +83,7 @@ python3 /path/to/techne/skills/intake/scripts/intake_gate.py init \
 写好 `.techne/plan/login-brief/intake.json` 后检查：
 
 ```bash
-python3 /path/to/techne/skills/intake/scripts/intake_gate.py check \
+python3 /path/to/techne/skills/anchor-intake/scripts/intake_gate.py check \
   --project /path/to/project \
   --plan login-brief
 ```
@@ -91,7 +91,7 @@ python3 /path/to/techne/skills/intake/scripts/intake_gate.py check \
 检查通过后 finalize：
 
 ```bash
-python3 /path/to/techne/skills/intake/scripts/intake_gate.py finalize \
+python3 /path/to/techne/skills/anchor-intake/scripts/intake_gate.py finalize \
   --project /path/to/project \
   --plan login-brief
 ```
@@ -99,7 +99,7 @@ python3 /path/to/techne/skills/intake/scripts/intake_gate.py finalize \
 如果捕获的 artifact 不是工程实现 brief：
 
 ```bash
-python3 /path/to/techne/skills/intake/scripts/intake_gate.py finalize \
+python3 /path/to/techne/skills/anchor-intake/scripts/intake_gate.py finalize \
   --project /path/to/project \
   --plan login-brief \
   --unscopable \
@@ -108,7 +108,7 @@ python3 /path/to/techne/skills/intake/scripts/intake_gate.py finalize \
 
 ## 写入内容
 
-`intake` 会在目标项目写入生成物：
+`anchor-intake` 会在目标项目写入生成物：
 
 ```text
 .techne/

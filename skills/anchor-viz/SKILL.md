@@ -1,9 +1,9 @@
 ---
-name: viz
+name: anchor-viz
 description: Draw a faithful architecture or structure diagram of a real codebase or project by scanning the actual repo, never guessing. Use for system architecture, request lifecycle, data model, state transitions, type structure, draw the architecture, map this project, 画架构图.
 ---
 
-# viz
+# anchor-viz
 
 Investigate by diagramming. The diagram is the byproduct; the value is forcing
 real investigation before drawing.
@@ -75,14 +75,14 @@ Examples:
 ## Script Usage
 
 - Validate Mermaid and altitude:
-  `node skills/viz/scripts/validate-mermaid.mjs diagram.md --project /path/to/project --max-nodes 15`
+  `node skills/anchor-viz/scripts/validate-mermaid.mjs diagram.md --project /path/to/project --max-nodes 15`
 - Store a diagram in a target project:
-  `python3 skills/viz/scripts/store_viz.py --project /path/to/project --name login-flow --title "Login flow" --diagram diagram.md --shape monorepo`
+  `python3 skills/anchor-viz/scripts/store_viz.py --project /path/to/project --name login-flow --title "Login flow" --diagram diagram.md --shape monorepo`
 - Build the self-contained viewer, opening it only when interactive:
-  `python3 skills/viz/scripts/build_viewer.py --project /path/to/project --open`
+  `python3 skills/anchor-viz/scripts/build_viewer.py --project /path/to/project --open`
 
 The validator expects `mermaid@11.15.0` and `jsdom` to be installed in one of
-these places: `TECHNE_VIZ_NODE_MODULES`, `skills/viz/scripts/node_modules`, the
+these places: `TECHNE_VIZ_NODE_MODULES`, `skills/anchor-viz/scripts/node_modules`, the
 current working directory, or an ancestor directory.
 
 ## Stop Conditions

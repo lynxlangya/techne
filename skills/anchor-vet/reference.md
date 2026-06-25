@@ -1,4 +1,4 @@
-# vet Reference
+# anchor-vet Reference
 
 Load this file when writing `review.json`, interpreting `report.json`, or
 deciding whether a finding, exclusion, claim disposition, or verdict is honest.
@@ -113,7 +113,7 @@ you are unsure how to phrase it politely.
 
 The script computes finding rungs:
 
-- `R3 probe-demonstrated`: a valid failing `repro` JSONL entry at
+- `R3 probe-demonstrated`: a valid failing `anchor-repro` JSONL entry at
   `scope.headSha`, with matching `entrySha256`.
 - `R2 cited-verified`: at least one citation verifies against the reviewed tree.
 - `R1 unanchored`: no verified citation or valid probe.
@@ -121,7 +121,7 @@ The script computes finding rungs:
 `blocking` findings must reach R2 or R3. R1 `concern` / `nit` findings are
 allowed but visible.
 
-`vet` reads only these `techne.repro/1` fields from a ledger entry:
+`anchor-vet` reads only these `techne.repro/1` fields from a ledger entry:
 `type`, `exit`, `timedOut`, `expectMatched`, and `git.head`. It never imports or
 executes `repro_ledger.py`.
 

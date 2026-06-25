@@ -1,4 +1,4 @@
-# viz Reference
+# anchor-viz Reference
 
 Keep this file as the detailed catalog. Load it when root shape, non-code
 classification, or Mermaid representation is not obvious.

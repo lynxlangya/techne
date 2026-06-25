@@ -1,9 +1,9 @@
 ---
-name: repro
+name: anchor-repro
 description: Reproduce a behavioral bug before fixing it, record the failing probe, and verify the fix with the same probe. Use for bug reports, failing tests, crashes, hangs, regressions, wrong output, and observable behavior that should change.
 ---
 
-# repro
+# anchor-repro
 
 Force the skipped move in debugging: observe the bug before editing, then prove
 the fix with the same observation.
@@ -61,7 +61,7 @@ observation before editing.
 Run and record a probe:
 
 ```bash
-python3 skills/repro/scripts/repro_ledger.py run \
+python3 skills/anchor-repro/scripts/repro_ledger.py run \
   --project /path/to/project \
   --bug login-crash \
   --cwd packages/app \
@@ -73,7 +73,7 @@ python3 skills/repro/scripts/repro_ledger.py run \
 Verify after the fix:
 
 ```bash
-python3 skills/repro/scripts/repro_ledger.py run \
+python3 skills/anchor-repro/scripts/repro_ledger.py run \
   --project /path/to/project \
   --bug login-crash \
   --cwd packages/app \
@@ -81,7 +81,7 @@ python3 skills/repro/scripts/repro_ledger.py run \
   --timeout 60 \
   -- npm test -- login.test.ts
 
-python3 skills/repro/scripts/repro_ledger.py close \
+python3 skills/anchor-repro/scripts/repro_ledger.py close \
   --project /path/to/project \
   --bug login-crash
 ```
@@ -89,7 +89,7 @@ python3 skills/repro/scripts/repro_ledger.py close \
 Mark an honestly speculative fix only when reproduction is impossible:
 
 ```bash
-python3 skills/repro/scripts/repro_ledger.py mark-unreproduced \
+python3 skills/anchor-repro/scripts/repro_ledger.py mark-unreproduced \
   --project /path/to/project \
   --bug customer-only-crash \
   --no-probe-possible \

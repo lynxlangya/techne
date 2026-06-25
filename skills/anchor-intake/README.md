@@ -1,6 +1,6 @@
-# intake
+# anchor-intake
 
-`intake` is a techne skill for interrogating a written engineering
+`anchor-intake` is a techne skill for interrogating a written engineering
 implementation brief before work starts. It forces the AI collaborator to walk a
 fixed ten-element rubric, cite present/weak claims against the brief, surface
 gaps and traps, and emit an intent-level plan only after the intake checks pass.
@@ -34,11 +34,11 @@ to install the whole techne skill set:
 npx skills add lynxlangya/techne -a codex -g -y
 ```
 
-If you intentionally want only `intake`, install the single skill:
+If you intentionally want only `anchor-intake`, install the single skill:
 
 ```bash
-npx skills add lynxlangya/techne --skill intake -a codex -g -y
-npx skills update intake -g -y
+npx skills add lynxlangya/techne --skill anchor-intake -a codex -g -y
+npx skills update anchor-intake -g -y
 ```
 
 Other hosts and fallback commands are documented in the root
@@ -51,7 +51,7 @@ Open the target project in your agent and provide the written brief.
 Claude Code:
 
 ```text
-/techne:intake
+/techne:anchor-intake
 Interrogate this implementation brief before planning:
 <paste ticket / PRD / design note>
 ```
@@ -59,7 +59,7 @@ Interrogate this implementation brief before planning:
 Codex or another Agent Skills host:
 
 ```text
-Use the intake skill. Interrogate this engineering implementation brief before
+Use the anchor-intake skill. Interrogate this engineering implementation brief before
 planning:
 <paste ticket / PRD / design note>
 ```
@@ -82,7 +82,7 @@ project's `.gitignore` when needed.
 Initialize a plan from a brief file:
 
 ```bash
-python3 /path/to/techne/skills/intake/scripts/intake_gate.py init \
+python3 /path/to/techne/skills/anchor-intake/scripts/intake_gate.py init \
   --project /path/to/project \
   --plan login-brief \
   --brief-file /tmp/login-brief.txt
@@ -91,7 +91,7 @@ python3 /path/to/techne/skills/intake/scripts/intake_gate.py init \
 Write `.techne/plan/login-brief/intake.json`, then check:
 
 ```bash
-python3 /path/to/techne/skills/intake/scripts/intake_gate.py check \
+python3 /path/to/techne/skills/anchor-intake/scripts/intake_gate.py check \
   --project /path/to/project \
   --plan login-brief
 ```
@@ -99,7 +99,7 @@ python3 /path/to/techne/skills/intake/scripts/intake_gate.py check \
 Finalize after the check passes:
 
 ```bash
-python3 /path/to/techne/skills/intake/scripts/intake_gate.py finalize \
+python3 /path/to/techne/skills/anchor-intake/scripts/intake_gate.py finalize \
   --project /path/to/project \
   --plan login-brief
 ```
@@ -107,7 +107,7 @@ python3 /path/to/techne/skills/intake/scripts/intake_gate.py finalize \
 If the captured artifact is not an engineering implementation brief:
 
 ```bash
-python3 /path/to/techne/skills/intake/scripts/intake_gate.py finalize \
+python3 /path/to/techne/skills/anchor-intake/scripts/intake_gate.py finalize \
   --project /path/to/project \
   --plan login-brief \
   --unscopable \
@@ -116,7 +116,7 @@ python3 /path/to/techne/skills/intake/scripts/intake_gate.py finalize \
 
 ## What Gets Written
 
-`intake` writes generated artifacts in the target project:
+`anchor-intake` writes generated artifacts in the target project:
 
 ```text
 .techne/

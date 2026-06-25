@@ -1,6 +1,6 @@
-# repro Reference
+# anchor-repro Reference
 
-`repro` turns a debugging promise into a mechanical gate: fail first, fix, then
+`anchor-repro` turns a debugging promise into a mechanical gate: fail first, fix, then
 pass the same probe identity.
 
 ## Probe Identity
@@ -38,7 +38,7 @@ environment variable, encode it in shell form so it becomes part of
 after `--` are joined with spaces before `sh -c`:
 
 ```bash
-python3 skills/repro/scripts/repro_ledger.py run \
+python3 skills/anchor-repro/scripts/repro_ledger.py run \
   --project /repo --bug locale-sort --shell --expect "wrong order" -- \
   'LC_ALL=C npm test'
 ```

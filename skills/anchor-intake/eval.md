@@ -1,6 +1,6 @@
-# intake Eval
+# anchor-intake Eval
 
-`intake` is accepted only if it improves pre-work brief interrogation under
+`anchor-intake` is accepted only if it improves pre-work brief interrogation under
 pressure. The mechanical fixtures test `intake_gate.py`; empirical validation
 tests the skill in a real Claude context before issue #28 is closed.
 
@@ -80,7 +80,7 @@ Each answer key is RUBRIC-GRADE:
 Protocol:
 
 - Fresh-session baseline legs use plain plan mode over the same brief.
-- Fresh-session skill legs use `intake` and the same brief.
+- Fresh-session skill legs use `anchor-intake` and the same brief.
 - Judges compare baseline vs. skill blind to condition where feasible.
 
 Metrics per leg:
