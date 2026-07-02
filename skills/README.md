@@ -44,6 +44,11 @@ work to external evidence rather than self-reported completion.
   and questions before emitting an intent-level plan. See
   [anchor-intake/README.md](anchor-intake/README.md) for human-facing usage and
   [anchor-intake/README-CN.md](anchor-intake/README-CN.md) for Chinese usage.
+- `anchor-diligence`: research one publicly listed company through dated evidence
+  snapshots, a fixed finance rubric, citation verification, and no investment
+  verdict. See [anchor-diligence/README.md](anchor-diligence/README.md) for
+  human-facing usage and [anchor-diligence/README-CN.md](anchor-diligence/README-CN.md)
+  for Chinese usage.
 
 ## Skill Body
 

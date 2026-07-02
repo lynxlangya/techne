@@ -5,7 +5,7 @@ that directory through a thin native skin or installs the same skills through
 the Agent Skills CLI.
 
 Current public skill names use the `anchor-*` prefix, such as `anchor-viz`,
-`anchor-repro`, `anchor-vet`, and `anchor-intake`.
+`anchor-repro`, `anchor-vet`, `anchor-intake`, and `anchor-diligence`.
 
 ## For an AI agent
 
