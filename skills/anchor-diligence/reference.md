@@ -305,21 +305,50 @@ Common warnings:
 
 **Every E2 fetch fails with `resolved address is not public global unicast`,
 regardless of the target site or ticker.** This is not a per-company problem — it
-means the executing shell's own network egress is intercepted, not that the target
-sites are actually unreachable or actually resolve to a private address. A common
-signature: unrelated real domains (an identity registry, an exchange, a news site)
-all resolve into `198.18.0.0/15` — IANA's RFC 2544 benchmark-testing range, not a
-block any real public site uses. Confirm with a plain probe outside the gate:
+means DNS in the executing environment is intercepted, not that the target sites are
+actually unreachable or actually resolve to a private address. A common signature:
+unrelated real domains (an identity registry, an exchange, a news site) all resolve
+into `198.18.0.0/15` — IANA's RFC 2544 benchmark-testing range, not a block any real
+public site uses.
+
+The most common cause on a developer machine is a **proxy client running in fake-ip
+mode** (Shadowrocket, Surge, Clash-family, sing-box): its TUN interface hijacks
+system-wide DNS and answers every query instantly from a local `198.18.x.x` pool,
+then intercepts connections to those fake addresses and routes them by hostname.
+Normal apps work fine — only tools that validate the resolved IP itself, like this
+gate, notice. A network-sandboxed agent shell can produce the same symptom, but do
+not assume that first: fake-ip affects the whole machine, so switching the agent to
+a full-access mode will not change anything.
+
+Two probes settle it:
 
 ```bash
+# 1) Known-real domain resolving into 198.18.x.x = DNS is intercepted somewhere.
 python3 -c "import socket; print(socket.getaddrinfo('www.sec.gov', 443))"
+
+# 2) The decisive fake-ip test: a nonexistent domain that still gets an answer.
+#    Real DNS returns NXDOMAIN; a fake-ip allocator hands out the next pool address.
+python3 -c "import socket; print(socket.getaddrinfo('this-domain-does-not-exist-zq83k1.com', 443))"
 ```
 
-If a known-real domain resolves to a `198.18.x.x` (or other non-public) address here,
-the execution shell is network-sandboxed (common for coding-agent shells) and the
-gate is correctly refusing to trust a synthetic address — do not weaken the
-admissibility check to work around this; it exists to reject exactly this shape of
-ambiguity, the same one A10/A14 hardened against real SSRF. Re-run `init`/`snapshot`
-from a context with genuine outbound network access instead (an agent host's
-full-access/unrestricted network mode, not its default sandboxed one, for this step
-specifically).
+If probe 2 returns an address, a fake-ip resolver is answering — check
+`scutil --dns` (macOS) for a `198.18.x.x` nameserver on a `utun*` interface and the
+proxy client that owns it.
+
+Either way, the gate is correctly refusing to trust a synthetic address — do not
+weaken the admissibility check to work around this; under fake-ip the gate cannot
+know the true destination (the proxy decides routing), which is exactly the ambiguity
+A10/A14 exist to reject. Fix the environment instead:
+
+- **Fake-ip proxy**: exclude the needed research domains from fake-ip (Surge-style
+  `always-real-ip` entries, supported by Shadowrocket; Clash's `fake-ip-filter`), or
+  switch the client's DNS to real-IP mode — domain-based routing generally still
+  works via SNI sniffing.
+- **Sandboxed agent shell** (only after fake-ip is ruled out): re-run
+  `init`/`snapshot` from a context with genuine outbound network access.
+
+One more failure worth distinguishing: a *single* host failing (TLS reset/EOF) while
+others fetch fine through the same setup is usually the target blocking the proxy's
+exit IP — `sec.gov` notably blocks datacenter/VPS egress ranges. Route that one host
+DIRECT, or use an alternative admissible source class (e.g. an `exchange-listing`
+page instead of EDGAR for identity).
