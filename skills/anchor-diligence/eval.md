@@ -10,6 +10,13 @@ empirical validation is a historical backtest run after implementation.
   `diligence_gate.py` py-compile, clean finalize, attack-shaped `/tmp`
   fixtures from rounds 2-5, URL/IP admissibility probes, `git diff --check`,
   and `claude plugin validate . --strict`.
+- 2026-07-02 — Review fix-up pass: **passed**. PR #32 review found 3 moderate
+  findings (identity/short-citation reflection false-positive,
+  `no-material-link` `checkedSurfaces` not grounding `plainSummary`, exact-token
+  `plainSummary` matching with no inflection tolerance) plus dead code in
+  `cmd_init`. All fixed; every prior attack-shaped fixture re-verified with zero
+  regressions (SSRF/admissibility, reflector rejection, A17 weakest-link,
+  fabricated-claim rejection), plus new fixtures below for the fixed behavior.
 - 2026-07-01 — Empirical acceptance: **not yet run**, owed. The implementation
   PR must not close issue #31. Historical backtest results should be recorded
   here and in `ROADMAP.md` before the skill is considered accepted.
@@ -52,6 +59,9 @@ must not be committed.
 | `status_surfaces_artifacts` | `status` reports scope, research, report, final report, and source list |
 | `argparse_unknown` | unknown subcommand or unknown flag exits through argparse with code 2 |
 | `gitignore_idempotent` | `.techne/` is appended to target `.gitignore` once |
+| `short_identifier_reflection_exempt` | a citation below `REFLECTION_MIN_QUOTE_TOKENS` (e.g. a bare ticker) from a realistic ticker-keyed URL does not trigger `e2_reflection_downgrade`, while a long multi-token fabricated claim through the same style of URL still does |
+| `no_material_link_checked_surfaces_ground_summary` | `no-material-link` with empty `claimItems` and a `plainSummary` matching only a verified `checkedSurfaces` quote passes, not `plain_summary_introduces_ungrounded_content` |
+| `plain_summary_inflection_tolerant` | `plainSummary` using a different inflection of an already-grounded word (e.g. "pivoted" vs. a citation's "pivoting") grounds; a genuinely new number or name still fails `plain_summary_introduces_ungrounded_content` |
 
 ## Attack-Shaped Fixture Notes
 
@@ -83,6 +93,24 @@ Round 5 probes:
 - A17 requires weakest-link aggregation across every claim item.
 - A17 must compose through the subfacet layer: parent `present` requires every
   required subfacet `present`.
+
+Review fix-up pass (2026-07-02, post-implementation):
+
+- Reflection coverage is exempt below `REFLECTION_MIN_QUOTE_TOKENS` (4 content
+  tokens) — a bare ticker/identifier isn't the multi-token, materially
+  informative claim the reflector attack requires, and realistic ticker-keyed
+  URLs on real financial sites were false-positiving on identity resolution.
+  The exemption is scoped to short quotes only; the padded/partial reflector
+  fixtures above are unaffected since their fabricated claims are well above
+  the token floor.
+- `checkedSurfaces` citation tokens now feed the same available-tokens pool as
+  `claimItems`/subfacets before `plainSummary` grounding runs, mirroring the
+  existing subfacet-token plumbing.
+- `plainSummary`/claim-item grounding compares stemmed tokens (a short,
+  conservative suffix list: `ing`/`ies`/`es`/`ed`/`s`, with a 3-character
+  minimum base to avoid collapsing short words), not raw strings — tolerates
+  ordinary inflection ("pivoted" vs. "pivoting") without weakening number or
+  proper-noun matching, since no digit-only token ends in a stripped suffix.
 
 ## Empirical Acceptance
 

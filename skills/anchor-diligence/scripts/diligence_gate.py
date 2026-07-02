@@ -38,6 +38,9 @@ MAX_SUMMARY_CHARS = 240
 MAX_FETCH_BYTES = 2_000_000
 MAX_REDIRECTS = 5
 REFLECTION_THRESHOLD = 0.5
+REFLECTION_MIN_QUOTE_TOKENS = 4
+STEM_SUFFIXES = ("ing", "ies", "es", "ed", "s")
+STEM_MIN_BASE_LEN = 3
 FETCH_SPREAD_WARNING_SECONDS = 2 * 60 * 60
 STALE_SOURCE_DAYS = {
     "price-trend": 14,
@@ -410,6 +413,20 @@ def content_tokens(value: str) -> list[str]:
 
 def token_set(value: str) -> set[str]:
     return set(content_tokens(value))
+
+
+def stem(token: str) -> str:
+    for suffix in STEM_SUFFIXES:
+        # Length floor keeps short tokens (e.g. "as", "is") from collapsing
+        # into near-empty stems that would then spuriously match each other.
+        if token.endswith(suffix) and len(token) - len(suffix) >= STEM_MIN_BASE_LEN:
+            base = token[: -len(suffix)]
+            return base + "y" if suffix == "ies" else base
+    return token
+
+
+def stemmed_set(tokens: set[str]) -> set[str]:
+    return {stem(tok) for tok in tokens}
 
 
 def normalized_locator(value: str) -> str:
@@ -852,7 +869,9 @@ def verify_citation(ctx: CheckContext, citation: dict[str, Any], element_id: str
         locator = meta.get("finalUrl") or meta.get("sourceLocator") or ""
         coverage = reflection_coverage(quote, locator)
         result["reflectionCoverage"] = coverage
-        if coverage >= REFLECTION_THRESHOLD:
+        quote_token_count = len(content_tokens(quote))
+        result["reflectionExempt"] = quote_token_count < REFLECTION_MIN_QUOTE_TOKENS
+        if quote_token_count >= REFLECTION_MIN_QUOTE_TOKENS and coverage >= REFLECTION_THRESHOLD:
             ctx.warning(
                 "e2_reflection_downgrade",
                 "Citation quote is substantially covered by the model-supplied URL path/query/fragment",
@@ -913,7 +932,8 @@ def check_claim_item(ctx: CheckContext, item: dict[str, Any], element_id: str, i
     tokens = set(content_tokens(text))
     if not tokens:
         ctx.failure("claim_item_without_content_tokens", "Claim item has no content tokens after normalization", element=element_id, claimId=cid)
-    if tokens and not any(tokens.issubset(set(content_tokens(quote))) for quote in verified_quotes):
+    stemmed_tokens = stemmed_set(tokens)
+    if tokens and not any(stemmed_tokens <= stemmed_set(set(content_tokens(quote))) for quote in verified_quotes):
         ctx.failure(
             "claim_item_not_grounded_in_citation",
             "No single verified citation span grounds all claim item content tokens",
@@ -977,7 +997,8 @@ def check_plain_summary(ctx: CheckContext, node: dict[str, Any], element_id: str
         ctx.failure("present_without_summary", "Evidence-bearing disposition needs a plainSummary within the length cap", element=element_id)
         return
     summary_tokens = set(content_tokens(summary))
-    extras = sorted(summary_tokens - available_tokens)
+    available_stems = stemmed_set(available_tokens)
+    extras = sorted(tok for tok in summary_tokens if stem(tok) not in available_stems)
     if extras:
         ctx.failure(
             "plain_summary_introduces_ungrounded_content",
@@ -1028,16 +1049,19 @@ def check_gap_indicator_warning(ctx: CheckContext, element_id: str) -> None:
             return
 
 
-def check_no_material_link(ctx: CheckContext, node: dict[str, Any], element_id: str) -> None:
+def check_no_material_link(ctx: CheckContext, node: dict[str, Any], element_id: str) -> set[str]:
     surfaces = node.get("checkedSurfaces")
+    tokens: set[str] = set()
     if not isinstance(surfaces, list) or not surfaces:
         ctx.failure("no_material_link_without_checked_surfaces", "no-material-link needs checkedSurfaces", element=element_id)
-        return
+        return tokens
     for index, surface in enumerate(surfaces):
         if not isinstance(surface, dict):
             ctx.failure("no_material_link_without_checked_surfaces", "checkedSurface must be an object", element=element_id, index=index)
             continue
-        verify_citations(ctx, surface.get("citations"), element_id, f"checkedSurface-{index + 1}")
+        for result in verify_citations(ctx, surface.get("citations"), element_id, f"checkedSurface-{index + 1}"):
+            if result.get("verified"):
+                tokens.update(content_tokens(result.get("quote", "")))
     for text in saved_snapshot_texts(ctx):
         norm = normalize_text(text)
         if any(normalize_text(ai).strip() in norm for ai in AI_INDICATOR_TERMS) and any(
@@ -1048,7 +1072,8 @@ def check_no_material_link(ctx: CheckContext, node: dict[str, Any], element_id: 
                 "AI indicator terms co-occur with revenue/product/segment terms in saved snapshots",
                 element=element_id,
             )
-            return
+            return tokens
+    return tokens
 
 
 def aggregate_disposition(claim_results: list[dict[str, Any]]) -> str:
@@ -1168,7 +1193,7 @@ def check_evidence_node(
         ctx.failure("present_weak_without_citation", "present-weak requires cited claimItems", element=element_id)
 
     if disposition == "no-material-link":
-        check_no_material_link(ctx, node, element_id)
+        tokens.update(check_no_material_link(ctx, node, element_id))
 
     if require_summary:
         check_plain_summary(ctx, node, element_id, tokens)
@@ -1470,8 +1495,6 @@ def cmd_init(args: argparse.Namespace) -> None:
         issuer_hosts.append({"value": host.rstrip(".").casefold(), "citations": [{"file": identity_file, **citation}]})
     if issuer_hosts:
         identity["issuerHosts"] = issuer_hosts
-    if args.exchange.casefold() != args.exchange.casefold() or args.ticker.casefold() != args.ticker.casefold():
-        pass
     scope = {
         "schema": SCOPE_SCHEMA,
         "createdAt": utc_now(),
@@ -1683,13 +1706,16 @@ def cmd_probe_url(args: argparse.Namespace) -> None:
         resolved, details = validate_resolved_host(parsed.hostname, port)
         classes = infer_source_classes_from_url(args.url)
         coverage = reflection_coverage(args.quote or "", args.url) if args.quote else 0.0
-        ok = coverage < REFLECTION_THRESHOLD
+        quote_token_count = len(content_tokens(args.quote or ""))
+        reflection_exempt = quote_token_count < REFLECTION_MIN_QUOTE_TOKENS
+        ok = reflection_exempt or coverage < REFLECTION_THRESHOLD
         payload = {
             "ok": ok,
             "resolvedIps": resolved,
             "resolutionDetails": details,
             "verifiedSourceClasses": sorted(classes),
             "reflectionCoverage": coverage,
+            "reflectionExempt": reflection_exempt,
         }
         print_json(payload)
         if not ok:
