@@ -123,7 +123,7 @@ carried — so trust this ledger, not issue state.
 | `anchor-repro` | passed (24/24 + review probes) | **not run — owed** | #22 closed 2026-06-10 (debt carried) | [`skills/anchor-repro/eval.md`](skills/anchor-repro/eval.md) |
 | `anchor-vet` | passed (56/56) | **not run — owed** | #25 closed 2026-06-13 (debt carried) | [`skills/anchor-vet/eval.md`](skills/anchor-vet/eval.md) |
 | `anchor-intake` | passed (21/21 + review probes) | **not run — owed** | #28 open | [`skills/anchor-intake/eval.md`](skills/anchor-intake/eval.md) |
-| `anchor-diligence` | **implementation PR pending** | **not run — owed** | #31 open | [`skills/anchor-diligence/eval.md`](skills/anchor-diligence/eval.md) |
+| `anchor-diligence` | passed (34 fixtures + PR review + fix-up pass, merged 2026-07-02) | **not run — owed** | #31 open | [`skills/anchor-diligence/eval.md`](skills/anchor-diligence/eval.md) |
 
 Discharging a skill's step-5 debt: run its `eval.md` empirical protocol (baseline
 vs. with-skill over seeded real-project material against a maintainer answer key),
