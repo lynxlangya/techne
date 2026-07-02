@@ -15,6 +15,7 @@ deciding whether a diligence disposition is honest.
 - Source classes
 - Failure codes
 - Known weak spots
+- Troubleshooting
 
 ## JSON Contract
 
@@ -299,3 +300,26 @@ Common warnings:
 - URL source-class inference is intentionally conservative and may reject real
   sources until the allowlist grows.
 - Windows is out of v1 scope.
+
+## Troubleshooting
+
+**Every E2 fetch fails with `resolved address is not public global unicast`,
+regardless of the target site or ticker.** This is not a per-company problem — it
+means the executing shell's own network egress is intercepted, not that the target
+sites are actually unreachable or actually resolve to a private address. A common
+signature: unrelated real domains (an identity registry, an exchange, a news site)
+all resolve into `198.18.0.0/15` — IANA's RFC 2544 benchmark-testing range, not a
+block any real public site uses. Confirm with a plain probe outside the gate:
+
+```bash
+python3 -c "import socket; print(socket.getaddrinfo('www.sec.gov', 443))"
+```
+
+If a known-real domain resolves to a `198.18.x.x` (or other non-public) address here,
+the execution shell is network-sandboxed (common for coding-agent shells) and the
+gate is correctly refusing to trust a synthetic address — do not weaken the
+admissibility check to work around this; it exists to reject exactly this shape of
+ambiguity, the same one A10/A14 hardened against real SSRF. Re-run `init`/`snapshot`
+from a context with genuine outbound network access instead (an agent host's
+full-access/unrestricted network mode, not its default sandboxed one, for this step
+specifically).
