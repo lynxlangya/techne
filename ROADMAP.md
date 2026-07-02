@@ -102,11 +102,6 @@ briefs through a fixed rubric before work starts, surfacing gaps,
 solution-as-goal traps, contradictions, and dependent questions before emitting
 an intent-level plan.
 
-`anchor-diligence` is the fifth real seeded skill and the `finance/global-alpha-style
-vertical analysis` seed. It lives under `skills/anchor-diligence/` and forces deep
-single-company public-equity research through exact identity resolution, dated evidence
-snapshots, a fixed finance rubric, citation verification, and a no-verdict report.
-
 ## Validation Status
 
 Per [`WORKFLOW.md`](WORKFLOW.md), a skill clears two gates: **step 4** mechanical
@@ -123,7 +118,6 @@ carried — so trust this ledger, not issue state.
 | `anchor-repro` | passed (24/24 + review probes) | **not run — owed** | #22 closed 2026-06-10 (debt carried) | [`skills/anchor-repro/eval.md`](skills/anchor-repro/eval.md) |
 | `anchor-vet` | passed (56/56) | **not run — owed** | #25 closed 2026-06-13 (debt carried) | [`skills/anchor-vet/eval.md`](skills/anchor-vet/eval.md) |
 | `anchor-intake` | passed (21/21 + review probes) | **not run — owed** | #28 open | [`skills/anchor-intake/eval.md`](skills/anchor-intake/eval.md) |
-| `anchor-diligence` | passed (34 fixtures + PR review + fix-up pass, merged 2026-07-02) | **not run — owed** | #31 open | [`skills/anchor-diligence/eval.md`](skills/anchor-diligence/eval.md) |
 
 Discharging a skill's step-5 debt: run its `eval.md` empirical protocol (baseline
 vs. with-skill over seeded real-project material against a maintainer answer key),

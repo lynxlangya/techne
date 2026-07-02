@@ -29,7 +29,7 @@ same skill bodies.
 
 The current seeded skills use the `anchor-*` prefix because each one anchors AI
 work to evidence it cannot self-report or fake: a source tree, run ledger, git
-diff, written brief, or dated evidence snapshots.
+diff, or written brief.
 
 - `anchor-viz` — investigate a real codebase by diagramming it. It routes one user
   request across architecture, interaction, data-model, state-model, and
@@ -46,10 +46,6 @@ diff, written brief, or dated evidence snapshots.
   starts, accounting the fixed rubric, surfacing gaps/traps/questions, and
   emitting an intent-level plan. See
   [skills/anchor-intake/README.md](skills/anchor-intake/README.md) for detailed usage.
-- `anchor-diligence` — produce a cited, no-verdict public-company deep-dive
-  dossier by resolving one listed equity, saving dated evidence snapshots, and
-  accounting a fixed finance rubric. See
-  [skills/anchor-diligence/README.md](skills/anchor-diligence/README.md) for detailed usage.
 
 ## Install
 

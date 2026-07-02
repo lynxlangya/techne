@@ -23,16 +23,12 @@ contains:
   admissibility.
 - `skills/anchor-intake/`, the fourth real skill: a written engineering brief
   interrogation gate that accounts a fixed rubric before work starts.
-- `skills/anchor-diligence/`, the fifth real skill: a public-company diligence
-  gate that resolves one listed equity, saves dated evidence snapshots, accounts
-  a fixed finance rubric, and renders a no-verdict dossier.
 
 There is still **no root app, no root package manager, no CI, and no repo-wide
 test runner**. `skills/anchor-viz/scripts/package.json` only pins helper dependencies
 for that skill's Mermaid validator; `skills/anchor-repro/scripts/repro_ledger.py`,
-`skills/anchor-vet/scripts/vet_gate.py`, `skills/anchor-intake/scripts/intake_gate.py`, and
-`skills/anchor-diligence/scripts/diligence_gate.py` are dependency-free Python 3 stdlib
-(POSIX-only). Do not infer commands,
+`skills/anchor-vet/scripts/vet_gate.py`, and `skills/anchor-intake/scripts/intake_gate.py`
+are dependency-free Python 3 stdlib (POSIX-only). Do not infer commands,
 dependencies, or architecture from the legacy library; that direction was
 abandoned.
 
@@ -49,8 +45,8 @@ install instructions that point back to that shared body.
 
 ## Current skill surface
 
-Five skills are seeded: `skills/anchor-viz`, `skills/anchor-repro`, `skills/anchor-vet`,
-`skills/anchor-intake`, and `skills/anchor-diligence`.
+Four skills are seeded: `skills/anchor-viz`, `skills/anchor-repro`, `skills/anchor-vet`,
+and `skills/anchor-intake`.
 
 `skills/anchor-viz` (coding/investigate):
 
@@ -112,19 +108,7 @@ Five skills are seeded: `skills/anchor-viz`, `skills/anchor-repro`, `skills/anch
   `plan.json` plus `intakeReport.json`. Classification and admissibility are
   computed, never self-reported.
 
-`skills/anchor-diligence` (finance/research):
-
-- `SKILL.md` forces public-company research through exact identity resolution,
-  dated evidence snapshots, fixed rubric accounting, citation-verified claim
-  items, and a no-verdict report.
-- `scripts/diligence_gate.py` (Python 3 stdlib, POSIX/macOS/Linux only) writes
-  `.techne/anchor-diligence/<TICKER>/scope.json`, `sources/`, consumes
-  researcher-authored `research.json`, computes `report.json` plus
-  `reportMeta.json`, and renders `report.md`. E2 URL fetches are gate-executed
-  and SSRF-hardened; E1 host-relayed evidence is always capped at
-  `present-weak`.
-
-Generated `.techne/` output (viz, repro, vet, intake, and diligence alike) belongs in
+Generated `.techne/` output (viz, repro, vet, and intake alike) belongs in
 target projects and must not be committed to this repository.
 
 ## Development workflow
@@ -182,16 +166,6 @@ reference suite:
 python3 -m py_compile skills/anchor-intake/scripts/intake_gate.py
 python3 skills/anchor-intake/scripts/intake_gate.py init --project /tmp/project --plan demo --brief-file /tmp/brief.txt
 python3 skills/anchor-intake/scripts/intake_gate.py check --project /tmp/project --plan demo
-```
-
-For `anchor-diligence` script changes, exercise the gate against throwaway `/tmp`
-projects — `skills/anchor-diligence/eval.md` is the reference suite:
-
-```bash
-python3 -m py_compile skills/anchor-diligence/scripts/diligence_gate.py
-python3 skills/anchor-diligence/scripts/diligence_gate.py status --project /tmp/project --ticker DEMO
-python3 skills/anchor-diligence/scripts/diligence_gate.py probe-url --ip 224.0.0.1
-python3 skills/anchor-diligence/scripts/diligence_gate.py check --project /tmp/project --ticker DEMO
 ```
 
 ## Legacy code

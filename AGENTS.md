@@ -3,14 +3,14 @@
 ```yaml
 version: v0.1
 project: techne
-updated: 2026-06-13
+updated: 2026-07-02
 ```
 
 ## Project Facts
 
 - `techne` is an early-stage skills/plugin repository for "Skills and agents for the AI era."
-- The current `main` branch contains the Claude plugin skin, install matrix docs, Cursor/Gemini thin skins, and five real skills: `skills/anchor-viz` (typed diagram router with a mechanical provenance gate), `skills/anchor-repro` (repro-first bugfix ledger), `skills/anchor-vet` (evidence-gated diff review), `skills/anchor-intake` (written-brief interrogation gate), and `skills/anchor-diligence` (public-company diligence gate anchored to self-fetched, cited evidence).
-- There is still no root app, root package manager, CI, or general test runner. `skills/anchor-viz/scripts/package.json` is a local helper manifest for the Mermaid validator, not a repo-wide build system; `skills/anchor-repro/scripts/repro_ledger.py`, `skills/anchor-vet/scripts/vet_gate.py`, `skills/anchor-intake/scripts/intake_gate.py`, and `skills/anchor-diligence/scripts/diligence_gate.py` are dependency-free Python 3 stdlib (POSIX-only).
+- The current `main` branch contains the Claude plugin skin, install matrix docs, Cursor/Gemini thin skins, and four real skills: `skills/anchor-viz` (typed diagram router with a mechanical provenance gate), `skills/anchor-repro` (repro-first bugfix ledger), `skills/anchor-vet` (evidence-gated diff review), and `skills/anchor-intake` (written-brief interrogation gate).
+- There is still no root app, root package manager, CI, or general test runner. `skills/anchor-viz/scripts/package.json` is a local helper manifest for the Mermaid validator, not a repo-wide build system; `skills/anchor-repro/scripts/repro_ledger.py`, `skills/anchor-vet/scripts/vet_gate.py`, and `skills/anchor-intake/scripts/intake_gate.py` are dependency-free Python 3 stdlib (POSIX-only).
 - The git history contains a legacy `atools-js` codebase, but new work in this repo should not infer current architecture, tooling, or business rules from that legacy history unless the user explicitly asks for migration or reference work.
 
 ## Working Rules
@@ -39,8 +39,7 @@ Non-trivial work follows [`WORKFLOW.md`](WORKFLOW.md) — read it before acting 
 - For documentation-only changes, run `git diff --check`.
 - For plugin packaging changes, run `claude plugin validate . --strict`; use `claude --bare --plugin-dir . plugin details techne` when you need to confirm skill discovery without opening an interactive Claude session.
 - For `skills/anchor-viz` script changes, run focused checks for the touched surface: `node skills/anchor-viz/scripts/validate-mermaid.mjs ...`, `python3 skills/anchor-viz/scripts/store_viz.py ...`, and `python3 skills/anchor-viz/scripts/build_viewer.py --project ...`; install or point `TECHNE_VIZ_NODE_MODULES` at `mermaid@11.15.0` + `jsdom` for validator checks.
-- For `skills/anchor-repro` script changes, run `python3 -m py_compile skills/anchor-repro/scripts/repro_ledger.py` and exercise the touched behavior against throwaway `/tmp` projects; the fixture table A–X in `skills/anchor-repro/eval.md` is the reference suite. The ledger must stay Python 3 stdlib and POSIX-only (macOS/Linux).
+- For `skills/anchor-repro` script changes, run `python3 -m py_compile skills/anchor-repro/scripts/repro_ledger.py` and exercise the touched behavior against throwaway `/tmp` projects; the fixture table A–Z in `skills/anchor-repro/eval.md` is the reference suite. The ledger must stay Python 3 stdlib and POSIX-only (macOS/Linux).
 - For `skills/anchor-vet` script changes, run `python3 -m py_compile skills/anchor-vet/scripts/vet_gate.py` and exercise the touched behavior against throwaway `/tmp` projects; the fixture table in `skills/anchor-vet/eval.md` is the reference suite. The gate must stay Python 3 stdlib and POSIX-only (macOS/Linux).
 - For `skills/anchor-intake` script changes, run `python3 -m py_compile skills/anchor-intake/scripts/intake_gate.py` and exercise the touched behavior against throwaway `/tmp` briefs; the fixture table in `skills/anchor-intake/eval.md` is the reference suite. The gate must stay Python 3 stdlib and POSIX-only (macOS/Linux).
-- For `skills/anchor-diligence` script changes, run `python3 -m py_compile skills/anchor-diligence/scripts/diligence_gate.py` and exercise the touched behavior against throwaway `/tmp` projects, including `probe-url`/`probe-url --ip` checks for URL and IP admissibility; the fixture table in `skills/anchor-diligence/eval.md` is the reference suite. The gate must stay Python 3 stdlib and POSIX-only (macOS/Linux), and any change touching URL fetching or evidence rungs must be treated as security-sensitive (SSRF surface), not routine.
 - For code or executable assets, use the closest direct validation and state any empirical gap. Codex can mechanically validate scripts and packaging, but Claude/maintainer review judges skill faithfulness on real projects.
