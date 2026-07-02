@@ -224,6 +224,7 @@ def run_probe(args: argparse.Namespace) -> None:
         stdout=subprocess.PIPE,
         stderr=subprocess.STDOUT,
         text=True,
+        errors="replace",
         shell=args.shell,
         executable="/bin/sh" if args.shell else None,
         start_new_session=True,
@@ -304,19 +305,28 @@ def analyze(entries: list[dict]) -> dict:
         entry for entry in entries if entry.get("type") == "run" and (entry.get("timedOut") or entry.get("exit") != 0) and entry.get("expect")
     ]
     repros: list[tuple[int, dict]] = [(index, entry) for index, entry in enumerate(entries) if is_repro(entry)]
+    regressed_identity: dict | None = None
     for index, repro in repros:
         identity = repro.get("identity")
-        for later in entries[index + 1 :]:
-            if is_verify(later, identity):
-                return {
-                    "ok": True,
-                    "verified": True,
-                    "speculative": False,
-                    "reproduced": True,
-                    "reproIdentity": identity,
-                    "verifyIdentity": later.get("identity"),
-                    "failureKind": None,
-                }
+        later_same = [
+            entry
+            for entry in entries[index + 1 :]
+            if entry.get("type") == "run" and entry.get("identity") == identity
+        ]
+        if not any(is_verify(entry, identity) for entry in later_same):
+            continue
+        last_same = later_same[-1]
+        if is_verify(last_same, identity):
+            return {
+                "ok": True,
+                "verified": True,
+                "speculative": False,
+                "reproduced": True,
+                "reproIdentity": identity,
+                "verifyIdentity": last_same.get("identity"),
+                "failureKind": None,
+            }
+        regressed_identity = identity
 
     speculative = next((entry for entry in reversed(entries) if entry.get("type") == "unreproduced"), None)
     if speculative:
@@ -346,6 +356,8 @@ def analyze(entries: list[dict]) -> dict:
         failure = "no_repro"
     elif anchored_failures and not repros:
         failure = "expect_not_matched"
+    elif regressed_identity is not None:
+        failure = "regressed_after_verify"
     elif later_mismatch is not None:
         failure = "identity_mismatch"
     else:
@@ -359,6 +371,8 @@ def analyze(entries: list[dict]) -> dict:
         "reproIdentity": repros[0][1].get("identity") if repros else None,
         "failureKind": failure,
     }
+    if failure == "regressed_after_verify":
+        result["regressedIdentity"] = regressed_identity
     if failure == "identity_mismatch":
         base = repros[0][1] if repros else first_failing
         mismatch = later_mismatch or (passing[0] if passing else None)

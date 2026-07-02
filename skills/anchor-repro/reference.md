@@ -94,14 +94,18 @@ Avoid:
 - Locale- or terminal-width-dependent formatting.
 
 The script strips ANSI CSI/OSC escape sequences and normalizes CRLF/lone CR to
-LF before matching. Wider terminal cursor-control behavior is a v1 coverage gap.
+LF before matching. Probe output is decoded as UTF-8 with invalid bytes replaced
+(U+FFFD), so probes that emit binary garbage still record an entry instead of
+crashing the ledger. Wider terminal cursor-control behavior is a v1 coverage gap.
 
 ## Hangs And Timeouts
 
 A timeout counts as a failing observation. Verification requires the identical
-identity completing with exit 0 inside the same timeout. The script runs probes
-in a POSIX session/process group and kills the group on timeout so spawned
-children do not outlive the probe.
+identity completing with exit 0 inside the same timeout, and the **latest**
+same-identity run must be that pass: a fail -> pass -> fail-again sequence does
+not verify and `close`/`status` report `regressed_after_verify` instead. The
+script runs probes in a POSIX session/process group and kills the group on
+timeout so spawned children do not outlive the probe.
 
 If a probe is flaky, strengthen it before trusting it. v1 does not implement
 N-run statistical handling.

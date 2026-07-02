@@ -9,6 +9,12 @@ real Claude context before merge.
 - 2026-06-10 — Mechanical fixtures A–X: **passed**, twice independently — in PR
   #23's self-check and re-verified in the Claude review (24/24, plus fresh-eyes
   probes and a realistic end-to-end fail → fix → verify cycle).
+- 2026-07-02 — Light-path fix pass (audit findings): non-UTF-8 probe output
+  crashed `run` with `UnicodeDecodeError` and lost the entry (now decoded with
+  `errors="replace"`, fixture Y); `close` certified `verified` on a
+  fail -> pass -> fail-again same-identity sequence by taking the first
+  later pass (now the latest same-identity run must be the pass, else
+  `regressed_after_verify`, fixture Z). Fixtures A–Z re-run: **passed**.
 - 2026-06-10 — Empirical acceptance (3 seeded historical bugs, baseline vs
   skill, controls C1–C3): **not yet run**, owed. PR #23 merged ahead of this
   gate. Tracking issue #22 was closed (2026-06-10) with this debt still carried,
@@ -46,6 +52,8 @@ All fixtures must pass in the PR with throwaway projects under `/tmp`.
 | V | hang repro at timeout T1, pass at timeout T2 | no verify; `identity_mismatch` |
 | W | run inside git repo vs non-git directory | git evidence block vs `git: null`; run never blocked |
 | X | fail with argv `['a b','c']`, pass with argv `['a','b c']` | distinct identities; `identity_mismatch` |
+| Y | probe emits invalid UTF-8 bytes | entry recorded with U+FFFD replacement; `run` does not crash |
+| Z | fail -> pass -> fail-again, all same identity | `close` exit 1, `regressed_after_verify`; a later same-identity pass restores `close` exit 0 |
 
 ## Empirical Acceptance
 
